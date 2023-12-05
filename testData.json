@@ -1,0 +1,20 @@
+[
+    {
+        "text": "Dies ist ein Test",
+        "btn1": "Button1",
+        "btn2": "Button2",
+        "btn3": "Button3",
+        "btn4": "Button4",
+        "correct": 0,
+        "time": 30000
+    },
+    {
+        "text": "Dies ist ein weiterer Test",
+        "btn1": "Erste Antwort",
+        "btn2": "Zweite  Antwort",
+        "btn3": "Dritte  Antwort",
+        "btn4": "Vierte  Antwort",
+        "correct": 2,
+        "time": 35000
+    }
+]

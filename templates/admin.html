@@ -39,7 +39,7 @@
         <div class="user" id="${name}">
             <strong>${name}</strong>
             <button class="kick-button" name="kick" value="${name}">Kick</button>
-            ${score}
+            <div class="score">${score}</div>
         </div>
         `;
         
@@ -56,6 +56,11 @@
 
     socketio.on("userLeve", (data) => {
         RemoveUser(data.name);
+    });
+
+    socketio.on("changeScore", (data) => {
+        alert(data.name + " " + data.score);
+        document.getElementById(data.name).getElementsByClassName("score").innerHTML = data.score;
     });
 </script>
 

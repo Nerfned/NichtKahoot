@@ -3,21 +3,60 @@
 {% block content %} 
 
 <script type="text/javascript">
+    var starttime = Date.now();
+
     var socketio = io();
 
     const UpdateValues = (data) => {
         var timer = data.time;
         var correct = data.correct;
+
+        document.getElementById("Button1").disabled = true;
+        document.getElementById("Button2").disabled = true;
+        document.getElementById("Button3").disabled = true;
+        document.getElementById("Button4").disabled = true;
+
         document.getElementById("questionText").innerHTML = data.text;
         document.getElementById("Button1").innerHTML = data.btn1;
         document.getElementById("Button2").innerHTML = data.btn2;
         document.getElementById("Button3").innerHTML = data.btn3;
         document.getElementById("Button4").innerHTML = data.btn4;
+        
+        // Add Timer Here
+
+        document.getElementById("Button1").disabled = false;
+        document.getElementById("Button2").disabled = false;
+        document.getElementById("Button3").disabled = false;
+        document.getElementById("Button4").disabled = false;
     };
 
     socketio.on("updateQuestions", (data) => {
         UpdateValues(data);
     });
+
+    const Answer1 = () => {
+        Answer(0);
+    }
+    const Answer2 = () => {
+        Answer(1);
+    }
+    const Answer3 = () => {
+        Answer(2);
+    }
+    const Answer4 = () => {
+        Answer(3);
+    }
+
+    const Answer = (button) => {
+        var currenttime = Date.now();
+
+        document.getElementById("Button1").disabled = true;
+        document.getElementById("Button2").disabled = true;
+        document.getElementById("Button3").disabled = true;
+        document.getElementById("Button4").disabled = true;
+
+        socketio.emit("answer", {buttonPressed: button, timedifference: (starttime - currenttime)});
+    };
 
 </script>
 
@@ -28,12 +67,12 @@
     <div class="timer"></div>
     <div class="quiz-inputs">
         <div class="row">
-            <button class="quiz-button" id="Button1" name="Button1">{{question.btn1}}</button>
-            <button class="quiz-button" id="Button2" name="Button2">{{question.btn2}}</button>
+            <button class="quiz-button" id="Button1" name="Button1" onclick=Answer1()>{{question.btn1}}</button>
+            <button class="quiz-button" id="Button2" name="Button2" onclick=Answer2()>{{question.btn2}}</button>
         </div>
         <div class="row">
-            <button class="quiz-button" id="Button3" name="Button3">{{question.btn3}}</button>
-            <button class="quiz-button" id="Button4" name="Button4">{{question.btn4}}</button>
+            <button class="quiz-button" id="Button3" name="Button3" onclick=Answer3()>{{question.btn3}}</button>
+            <button class="quiz-button" id="Button4" name="Button4" onclick=Answer4()>{{question.btn4}}</button>
         </div>
     </div>
 </form>

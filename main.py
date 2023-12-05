@@ -197,6 +197,28 @@ def home():
 #     rooms[room]["messages"].append(content)
 #     print(f"{name} said: {ddata}")
 
+@socketio.on("answer")
+def connect(data):
+    room = session.get("room")
+    name = session.get("name")
+    adminroom = session.get("adminroom")
+    
+    question = json.loads(rooms[room]["questions"])[rooms[room]["currentquestion"]]
+
+    if room is None or name is None:
+        return
+    
+    if room not in rooms:
+        leave_room(room)
+        return
+    
+    if data["buttonPressed"] == question["correct"]:
+        timeTaken = round(question["time"]/1000 * (question["time"] - data["timedifference"]))
+        
+        rooms[room]["members"][name]["score"] += timeTaken
+        
+        socketio.emit("changeScore", {"name": name, "score": rooms[room]["members"][name]["score"]}, to=adminroom)   
+
 @socketio.on("connect")
 def connect(auth):
     room = session.get("room")
