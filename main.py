@@ -50,6 +50,7 @@ def admin():
         result = request.form.get("results", False)
         next = request.form.get("next", False)
 
+        updateQuestions = False
 
         questions = re.sub('\s+',' ',questions)
 
@@ -57,17 +58,19 @@ def admin():
             if currentquestion is None:
                 return render_template("admin.html", admincode=adminroom, usercode=room, questions=questions, currentquestion=currentquestion, users=users, error="Keine Fragen eingetragen")
             
-            rooms[room]["currentquestion"] += 1
+            if rooms[room]["currentquestion"] < len(rooms[room]["questions"]):
+                rooms[room]["currentquestion"] += 1
 
-            sendcontent = {"content": {"currentquestion": currentquestion}, "to": room}
+            updateQuestions = True
             
         if previous != False:
             if currentquestion is None:
                 return render_template("admin.html", admincode=adminroom, usercode=room, questions=questions, currentquestion=currentquestion, users=users, error="Keine Fragen eingetragen")
+            
+            if rooms[room]["currentquestion"] > 0:
+                rooms[room]["currentquestion"] -= 1
 
-            rooms[room]["currentquestion"] -= 1
-
-            sendcontent = {"content": {"currentquestion": currentquestion}, "to": room}
+            updateQuestions = True
             
         if commit != False:
             rooms[room]["questions"] = questions
@@ -75,6 +78,9 @@ def admin():
             if rooms[room]["currentquestion"] is None:
                 rooms[room]["currentquestion"] = 0
 
+            updateQuestions = True
+
+        if updateQuestions:
             question = rooms[room]["questions"]
             questionobj = json.loads(question)
 
@@ -100,13 +106,6 @@ def quiz():
     currentroom = rooms[roomcode]
 
     currentquestion = currentroom["currentquestion"]
-
-    # if request.method == "POST":
-    #     name = request.form.get("name")
-    #     roomcode = request.form.get("code")
-    #     join = request.form.get("join", False)
-    #     create = request.form.get("create", False)
-    #     pass
 
     if currentquestion is None:
         return render_template("home.html", error = "Room is not ready to start", code=roomcode, name=name)
@@ -215,7 +214,6 @@ def connect(auth):
         join_room(adminroom)
     else:
         join_room(room)
-        # send({"name": name, "score": 0}, to=room)
         socketio.emit("userJoin", {"name": name, "score": 0}, to=adminroom)
 
         rooms[room]["members"][name] = {"sessiontoken": session.get("sessiontoken"),"score": 0}
@@ -233,9 +231,6 @@ def disconnect():
         if room in rooms:
             del rooms[room]["members"][name]
             socketio.emit("userLeve", {"name": name}, to=adminroom)
-            # if len(rooms[room]["members"]) <= 0:
-            #     del rooms[room]
-            #     print(f"deleted room {room}")
     else:
         leave_room(adminroom)
 
