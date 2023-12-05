@@ -1,19 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %} 
+
+<script type="text/javascript">
+    var socketio = io();
+
+    const UpdateValues = (data) => {
+        var timer = data.time;
+        var correct = data.correct;
+        document.getElementById("questionText").innerHTML = data.text;
+        document.getElementById("Button1").innerHTML = data.btn1;
+        document.getElementById("Button2").innerHTML = data.btn2;
+        document.getElementById("Button3").innerHTML = data.btn3;
+        document.getElementById("Button4").innerHTML = data.btn4;
+    };
+
+    socketio.on("updateQuestions", (data) => {
+        UpdateValues(data);
+    });
+
+</script>
+
 <form method="post" class="quiz">
     <div class="question">
-        <h1>{{question}}</h1>
+        <h1 id="questionText">{{question.text}}</h1>
     </div>
     <div class="timer"></div>
     <div class="quiz-inputs">
         <div class="row">
-            <button class="quiz-button" id="Button1" name="Button1">{{Button1}}</button>
-            <button class="quiz-button" id="Button2" name="Button2">{{Button2}}</button>
+            <button class="quiz-button" id="Button1" name="Button1">{{question.btn1}}</button>
+            <button class="quiz-button" id="Button2" name="Button2">{{question.btn2}}</button>
         </div>
         <div class="row">
-            <button class="quiz-button" id="Button3" name="Button3">{{Button3}}</button>
-            <button class="quiz-button" id="Button4" name="Button4">{{Button4}}</button>
+            <button class="quiz-button" id="Button3" name="Button3">{{question.btn3}}</button>
+            <button class="quiz-button" id="Button4" name="Button4">{{question.btn4}}</button>
         </div>
     </div>
 </form>

@@ -15,17 +15,55 @@
         <button id="results" name="results">Ergebnis</button>
         <button id="button-next" name="next">>></button>
     </div>
-
+    
     <div class="connected-users center">
         <h2>User im Raum</h2>
-        {% for user in users %}
-            <div class="user">
-                <strong>{{user.name}}</strong>
-                <button class="kick-button" name="kick" value="{{user.name}}">Kick</button>
-                {{user.score}}
-            </div>
-        {% endfor %}
-
+        <div class="users" id="users">
+            {% for user in users %}
+                <div class="user" id="{{user.name}}">
+                    <strong>{{user.name}}</strong>
+                    <button class="kick-button" name="kick" value="{{user.name}}">Kick</button>
+                    {{user.score}}
+                </div>
+            {% endfor %}
+        </div>
     </div>
+
+<script type="text/javascript">
+    var socketio = io();
+
+    const users = document.getElementById("users")
+
+    const DisplayUser = (name, score) => {
+        const content = `
+        <div class="user" id="${name}">
+            <strong>${name}</strong>
+            <button class="kick-button" name="kick" value="${name}">Kick</button>
+            ${score}
+        </div>
+        `;
+        
+        users.innerHTML += content;
+    };
+
+    const RemoveUser = (name) => {
+        document.getElementById("name").remove();
+    };
+
+    socketio.on("userJoin", (data) => {
+        DisplayUser(data.name, data.score);
+    });
+
+    socketio.on("userLeve", (data) => {
+        RemoveUser(data.name);
+    });
+</script>
+
+    
+    {% if error %}
+    <ul>
+        <li>{{error}}</li>
+    </ul>
+    {% endif %}
 </form>
 {% endblock %}
