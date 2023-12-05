@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post" class="create-questions center">
+    <h3>Admincode: {{admincode}}</h3>
+    <h3>Roomcode: {{usercode}}</h3>
+    <div class="edit-questions">
+        <textarea name="questions" id="edit-questions">{{questions}}</textarea><br>
+        <button name="commit" id="commit">Übernehmen</button>
+    </div>
+
+    <div class="quiz-controll">
+        <p>Current question: {{currentquestion}}</p>
+        <button id="button-prev" name="previous"><<</button>
+        <button id="results" name="results">Ergebnis</button>
+        <button id="button-next" name="next">>></button>
+    </div>
+
+    <div class="connected-users center">
+        <h2>User im Raum</h2>
+        {% for user in users %}
+            <div class="user">
+                <strong>{{user.name}}</strong>
+                <button class="kick-button" name="kick" value="{{user.name}}">Kick</button>
+                {{user.score}}
+            </div>
+        {% endfor %}
+
+    </div>
+</form>
+{% endblock %}
