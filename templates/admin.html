@@ -2,73 +2,82 @@
 
 {% block content %}
 <form method="post" class="create-questions center">
-    <h3>Admincode: {{admincode}}</h3>
-    <h3>Roomcode: {{usercode}}</h3>
-    <div class="edit-questions">
-        <textarea name="questions" id="edit-questions">{{questions}}</textarea><br>
-        <button name="commit" id="commit">Übernehmen</button>
+    <div class="room-code">
+        <h3>Admincode: {{admincode}}</h3>
+        <h3>Roomcode: {{usercode}}</h3>
     </div>
 
-    <div class="quiz-controll">
-        <p>Current question: {{currentquestion}}</p>
-        <button id="button-prev" name="previous"><<</button>
-        <button id="results" name="results">Ergebnis</button>
-        <button id="button-next" name="next">>></button>
+    {% if error %}
+    <div class="card text-bg-danger text-center" id="alert-admin">
+        <div class="card-body">
+            <h5 class="card-title">{{error}}</h5>
+        </div>
     </div>
-    
+    {% endif %}
+
+    <div class="quiz-control">
+        <p>Current question: <br>{{currentquestion}}</p>
+        <button class="btn btn-primary" id="button-prev" name="previous">&laquo;</button>
+        <button class="btn btn-primary" id="results" name="results">Ergebnis</button>
+        <button class="btn btn-primary" id="button-next" name="next">&raquo;</button>
+    </div>
+
+    <div class="edit-questions">
+        <div class="form-outline" data-mdb-input-init>
+            <textarea class="form-control" name="questions" id="edit-questions" rows="2">{{questions}}</textarea>
+            <label class="form-label" for="edit-questions">Fragen bearbeiten</label>
+        </div>
+        <button class="btn btn-primary" name="commit" id="admin-commit">Übernehmen</button>
+    </div>
+
+
     <div class="connected-users center">
         <h2>User im Raum</h2>
         <div class="users" id="users">
             {% for user in users %}
-                <div class="user" id="{{user.name}}">
-                    <strong>{{user.name}}</strong>
-                    <button class="kick-button" name="kick" value="{{user.name}}">Kick</button>
-                    {{user.score}}
-                </div>
+            <div class="user" id="{{user.name}}">
+                <strong>{{user.name}}</strong>
+                <button class="kick-button" name="kick" value="{{user.name}}">Kick</button>
+                {{user.score}}
+            </div>
             {% endfor %}
         </div>
     </div>
 
-<script type="text/javascript">
-    var socketio = io();
+    <script type="text/javascript">
+        var socketio = io();
 
-    const users = document.getElementById("users")
+        const users = document.getElementById("users")
 
-    const DisplayUser = (name, score) => {
-        const content = `
+        const DisplayUser = (name, score) => {
+            const content = `
         <div class="user" id="${name}">
             <strong>${name}</strong>
             <button class="kick-button" name="kick" value="${name}">Kick</button>
             <div class="score">${score}</div>
         </div>
         `;
-        
-        users.innerHTML += content;
-    };
 
-    const RemoveUser = (name) => {
-        document.getElementById("name").remove();
-    };
+            users.innerHTML += content;
+        };
 
-    socketio.on("userJoin", (data) => {
-        DisplayUser(data.name, data.score);
-    });
+        const RemoveUser = (name) => {
+            document.getElementById("name").remove();
+        };
 
-    socketio.on("userLeve", (data) => {
-        RemoveUser(data.name);
-    });
+        socketio.on("userJoin", (data) => {
+            DisplayUser(data.name, data.score);
+        });
 
-    socketio.on("changeScore", (data) => {
-        alert(data.name + " " + data.score);
-        document.getElementById(data.name).getElementsByClassName("score").innerHTML = data.score;
-    });
-</script>
+        socketio.on("userLeve", (data) => {
+            RemoveUser(data.name);
+        });
 
-    
-    {% if error %}
-    <ul>
-        <li>{{error}}</li>
-    </ul>
-    {% endif %}
+        socketio.on("changeScore", (data) => {
+            alert(data.name + " " + data.score);
+            document.getElementById(data.name).getElementsByClassName("score").innerHTML = data.score;
+        });
+    </script>
+
 </form>
 {% endblock %}

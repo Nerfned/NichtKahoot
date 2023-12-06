@@ -4,6 +4,10 @@
     justify-content: center;
 }
 
+.title {
+    font-size: xx-large;
+}
+
 .buttons {
     display: flex;
     flex-direction: column;
@@ -19,9 +23,21 @@
     width: 100%;
 }
 
+#join-button {
+    margin-left: 5px
+}
 
 #create-btn {
     width: 100%;
+}
+
+#alert {
+    margin-bottom: 5px;
+}
+
+.form-outline {
+    --mdb-surface-color: white;
+    --mdb-form-control-label-color: white;
 }
 
 .message-box {
@@ -72,4 +88,24 @@ h2 {
 
 .center {
     text-align: center;
+    color: white;
 }
+
+#admin-commit {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.room-code {
+    margin-bottom: 50px;
+}
+
+.quiz-control {
+    margin-bottom: 20px;
+}
+
+#alert-admin {
+    margin-top: -25px;
+    margin-bottom: 20px;
+}
+
