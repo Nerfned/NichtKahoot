@@ -1,20 +1,92 @@
 [
     {
-        "text": "Dies ist ein Test",
-        "btn1": "Button1",
-        "btn2": "Button2",
-        "btn3": "Button3",
-        "btn4": "Button4",
+        "text": "Wer schwimmt den ganzen Tag im Aquarium?",
+        "btn1": "Friedrich",
+        "btn2": "Patricia",
+        "btn3": "Kalle",
+        "btn4": "Dieter",
+        "correct": 2,
+        "time": 30000
+    },
+    {
+        "text": "Wer gilt als heimlicher Stargitarrist der Gitarrenhelden?",
+        "btn1": "Petra  M.",
+        "btn2": "Felix",
+        "btn3": "Simon",
+        "btn4": "Marius F.",
+        "correct": 1,
+        "time": 30000
+    },
+    {
+        "text": "Was gilt als das inoffizielle TRAFFIQX Maskottchen?",
+        "btn1": "Frosch",
+        "btn2": "Löwe",
+        "btn3": "Schlange",
+        "btn4": "Otter",
+        "correct": 3,
+        "time": 30000
+    },
+    {
+        "text": "Wer gehört nicht zur b4 Teslaflotte?",
+        "btn1": "Felix",
+        "btn2": "Jan O.",
+        "btn3": "Steffen",
+        "btn4": "Thorsten",
+        "correct": 3,
+        "time": 30000
+    },
+    {
+        "text": "Wer ist die jüngste und die älteste Person bei b4?",
+        "btn1": "Armin, Guido",
+        "btn2": "Lena, Dieter",
+        "btn3": "Armin, Armin",
+        "btn4": "Leon, Bernd",
         "correct": 0,
         "time": 30000
     },
     {
-        "text": "Dies ist ein weiterer Test",
-        "btn1": "Erste Antwort",
-        "btn2": "Zweite  Antwort",
-        "btn3": "Dritte  Antwort",
-        "btn4": "Vierte  Antwort",
+        "text": "Welcher Spruch begrüßt uns an der Kaffeemaschine?",
+        "btn1": "Kaffee, der Sexy Wachmacher für die coolen Kids",
+        "btn2": "Dieser Kaffee macht wach, jung und sexy",
+        "btn3": "Kaffee, der jugendliche Energiebooster für heiße Tage",
+        "btn4": "Programmierer, Menschen die Kaffee in Bugs verwandeln",
+        "correct": 1,
+        "time": 45000
+    },
+    {
+        "text": "Wieviel Geld wird pro Woche etwa für süßes ausgegeben?",
+        "btn1": "69€",
+        "btn2": "420€",
+        "btn3": "42 Mark",
+        "btn4": "621€",
+        "correct": 1,
+        "time": 30000
+    },
+    {
+        "text": "Wie viele Azubis hat die b4?",
+        "btn1": "6",
+        "btn2": "7",
+        "btn3": "8",
+        "btn4": "9",
         "correct": 2,
-        "time": 35000
+        "time": 10000
+    },
+    {
+        "text": "Wer hat 80 Hühner?",
+        "btn1": "Armin S.",
+        "btn2": "Norbert",
+        "btn3": "Uta",
+        "btn4": "Swantje",
+        "correct": 0,
+        "time": 30000
+    },
+    {
+        "text": "We viele Nadeln hat ein durchschnittlicher, 1,70m hoher Weihnachtsbaum?",
+        "btn1": "4",
+        "btn2": "69.000",
+        "btn3": "420.000",
+        "btn4": "Ich bin zu nüchtern für den scheiß",
+        "correct": 3,
+        "time": 30000
     }
 ]

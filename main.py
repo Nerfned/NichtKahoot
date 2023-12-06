@@ -1,3 +1,12 @@
+######################################################
+#
+#      Autor: Armin Scheu
+#      Created: 2023
+#      Description: Welp, its Kahoot!, but way shittier
+#
+#
+######################################################
+
 # pip install Flask
 # pip install flask-socketio
 
@@ -213,6 +222,10 @@ def connect(data):
         return
     
     if data["buttonPressed"] == question["correct"]:
+
+        # percentile = data["timedifference"] * 100 / question["time"]
+        # value = 1000 / percentile
+
         timeTaken = round(question["time"]/1000 * (question["time"] - data["timedifference"]))
         
         rooms[room]["members"][name]["score"] += timeTaken
