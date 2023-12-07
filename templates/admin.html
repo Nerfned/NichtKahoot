@@ -62,7 +62,7 @@
         };
 
         const RemoveUser = (name) => {
-            document.getElementById("name").remove();
+            document.getElementById(name).remove();
         };
 
         socketio.on("userJoin", (data) => {
