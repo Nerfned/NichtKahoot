@@ -135,10 +135,11 @@ def home():
         create = request.form.get("create", False)
 
         if not name:
-            return render_template("home.html", error = "Pease enter a name.", code=code, name=name)
+            return render_template("home.html", error = "Please enter a name.", code=code, name=name)
         
         if join != False and not code:
-            return render_template("home.html", error = "Pease enter a room code.", code=code, name=name)
+            return render_template("home.html", error = "Please enter a room code.", code=code, name=name,)
+
         
         room = code
         if create != False:

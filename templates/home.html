@@ -1,24 +1,39 @@
 {% extends 'base.html' %}
 
-{% block content %} 
-<form method="post" class="buttons">
-    <h3>Enter a quizroom</h3>
-    <div>
-        <label>Name:</label>
-        <input type="text" placeholder="Pick a Name!" name="name" value="{{name}}"/>
+{% block content %}
+
+<!-- <h1 class="title">Christmas-Kahoot</h1> -->
+
+<form method="post" class="buttons" class="row g-3 needs-validation" novalidate>
+    <h1>Enter a Quizroom</h1>
+
+    {% if error %}
+    <div class="card text-bg-danger text-center" id="alert">
+        <div class="card-body">
+            <h5 class="card-title">{{error}}</h5>
+        </div>
+    </div>
+    {% endif %}
+
+
+    <div class="form-outline" data-mdb-input-init>
+        <input class="form-control" id="name" type="text" placeholder="Pick a Name!" name="name" value="{{name}}"
+            required />
+        <label class="form-label" for="name">Name:</label>
+        <div class="invalid-feedback">Please choose a username.</div>
     </div>
 
+
     <div class="join">
-        <input type="text" placeholder="Room Code" name="code" value="{{code}}"/>
-        <button type="submit" name="join">Join a Room</button>
+        <div class="form-outline" data-mdb-input-init>
+            <input class="form-control" id="code" type="text" name="code" value="{{code}}" />
+            <label class="form-label" for="code">Room Code</label>
+        </div>
+        <button class="btn btn-primary" type="submit" name="join" id="join-button" data-mdb-ripple-init>Join</button>
     </div>
-    
-    <button type="submit" name="create" class="create-btn">Create a Room</button>
-    
-    {% if error %}
-    <ul>
-        <li>{{error}}</li>
-    </ul>
-    {% endif %}
+
+    <button class="btn btn-primary" id="create-btn" type="submit" name="create" data-mdb-ripple-init>Create a Room</button>
+
+
 </form>
 {% endblock %}
