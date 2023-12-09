@@ -3,55 +3,65 @@
 {% block content %}
 
 <script type="text/javascript">
-    var starttime = new Date.now();
-
     var socketio = io();
+    var startTime = null;
 
+    // initializes countdown and makes sure the last timeout is terminated
     let countdown = void 0;
     clearInterval(countdown);
 
+    // changes all Text on Website and handles the timers
     const UpdateValues = (data) => {
-        clearInterval(countdown);
-        var timer = 15;
-       
+        buttonDisableTimer(5, false);
+        
         var correct = data.correct;
-        document.getElementById("Button1").disabled = false;
-        document.getElementById("Button2").disabled = false;
-        document.getElementById("Button3").disabled = false;
-        document.getElementById("Button4").disabled = false;
-
-
+        
         document.getElementById("questionText").innerHTML = data.text;
+        
         document.getElementById("Button1").innerHTML = data.btn1;
         document.getElementById("Button2").innerHTML = data.btn2;
         document.getElementById("Button3").innerHTML = data.btn3;
         document.getElementById("Button4").innerHTML = data.btn4;
-
-
-        document.getElementById("timer").innerHTML = timer;
-
-        countdown = window.setInterval(() => {
-            timer--;
-            document.getElementById("timer").innerHTML = timer;
-            if (timer == 0) {
-                clearInterval(countdown)
-                document.getElementById("Button1").disabled = true;
-                document.getElementById("Button2").disabled = true;
-                document.getElementById("Button3").disabled = true;
-                document.getElementById("Button4").disabled = true;
-                // document.getElementById("Button4").innerHTML = data.btn4;
-            };
-        }, 1000);
-
-
-
+        
+        // waits until first timeout is done timeouting
+        // then starts the second timeout
+        setTimeout(() =>{
+            startTime = buttonDisableTimer(data.time, true);
+        }, 5000);
 
     };
 
-    socketio.on("updateQuestions", (data) => {
-        UpdateValues(data);
-    });
+    // Timer Thingy
+    const buttonDisableTimer = (timer, state) => {
+        
+        timerobj = document.getElementById("timer")
+        
+        clearInterval(countdown);
+        
+        changeAllButtonDisabledStates(!state);
 
+        timerobj.innerHTML = timer;
+
+        countdown = window.setInterval(
+            () => {
+                timer--;
+                
+                timerobj.innerHTML = timer;
+                
+                if (timer <= 0) {
+                    clearInterval(countdown) // terminates Countdown
+                    changeAllButtonDisabledStates(state);
+                };
+            },
+            1000
+        );
+        return new Date();
+    }
+
+    // Button Handler, 
+    // yes it's shit, 
+    // yes I hate it
+    // no I won't change it, change it yourself
     const Answer1 = () => {
         Answer(0);
     }
@@ -65,22 +75,39 @@
         Answer(3);
     }
 
-    const Answer = (button) => {
-        var currenttime = new Date.now();
-
-        document.getElementById("Button1").disabled = true;
-        document.getElementById("Button2").disabled = true;
-        document.getElementById("Button3").disabled = true;
-        document.getElementById("Button4").disabled = true;
-
-        socketio.emit("answer", {buttonPressed: button, timedifference: (currenttime - starttime)});
+    // changes the disabled state of all buttons to given state
+    const changeAllButtonDisabledStates = (state) =>{
+        const buttons = document.getElementsByTagName("button");
+        
+        for (const button of buttons) {
+            button.disabled = state;
+        }
     };
 
+    ////////////////////////// Socket Emtters
+    
+    // Answer Handler
+    const Answer = (button) => {
+        var now = new Date();
+        var seconds = (now.getTime() - startTime.getTime()) / 1000;
 
+        changeAllButtonDisabledStates(true);
+
+        socketio.emit("answer", {buttonPressed: button, timedifference: seconds});
+    };
+
+    ////////////////////////// Socket Event Handlers
+
+    socketio.on("updateQuestions", (data) => {
+        UpdateValues(data);
+    });
 
 </script>
 
-<form class="quiz">
+<!-- HTML Template -->
+<input type="hidden" name="isAlreadySolved" id="isAlreadySolved" value="{{alreadySolved}}">
+
+<div class="form quiz">
     <div class="timer">
         <h1 id="timer">{{timer}}</h1>
     </div>
@@ -88,11 +115,6 @@
     <div class="question">
         <h1 id="questionText">{{question.text}}</h1>
     </div>
-
-    <!-- <div class="answer">
-        <h1 id="answer">{{question.text}}</h1>
-    </div> -->
-
 
     <div class="quiz-inputs">
         <div class="row">
@@ -108,5 +130,5 @@
                 onclick=Answer4()>{{question.btn4}}</button>
         </div>
     </div>
-</form>
+</div>
 {% endblock %}

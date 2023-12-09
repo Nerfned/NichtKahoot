@@ -26,7 +26,6 @@ socketio = SocketIO(app)
 rooms = {}
 adminrooms = {}
 
-
 ################### Functions
 
 # Generates a random uppercase roomcode
@@ -124,24 +123,26 @@ def quiz():
     question = currentroom["questions"]
     questionobj = json.loads(question)
 
-    return render_template("quiz.html", question=questionobj[currentquestion])
+    return render_template("quiz.html", question=questionobj[currentquestion], alreadySolved=True)
 
 @app.route("/", methods=["POST", "GET"])
 def home():
     sessiontoken = session.get("sessiontoken")
     session.clear()
+
+    roomcode = request.args.get("code")    
+
     if request.method == "POST":
         name = request.form.get("name")
         code = request.form.get("code")
         join = request.form.get("join", False)
         create = request.form.get("create", False)
 
-        if not name:
+        if not name and create == False:
             return render_template("home.html", error = "Please enter a name.", code=code, name=name)
         
         if join != False and not code:
             return render_template("home.html", error = "Please enter a room code.", code=code, name=name,)
-
         
         room = code
         if create != False:
@@ -175,39 +176,10 @@ def home():
 
         return redirect(url_for("quiz"))
 
+    if roomcode is not None:
+        return render_template("home.html", code=roomcode, disableCreateNew = True)
+    
     return render_template("home.html")
-
-
-# @app.route("/room")
-# def room():
-#     room = session.get("room")
-
-#     if room is None or session.get("name") is None or room not in rooms:
-#         return redirect(url_for("home"))
-
-#     return render_template("room.html", code=room, messages=rooms[room]["messages"])
-
-
-############################################ Web Sockets
-
-# @socketio.on("message")
-# def message(data):
-#     room = session.get("room")
-    
-#     if room not in rooms:
-#         return
-    
-#     name = session.get("name")
-#     ddata = data["data"]
-
-#     content = {
-#         "name": name,
-#         "message": ddata
-#     }
-
-#     send(content, to=room)
-#     rooms[room]["messages"].append(content)
-#     print(f"{name} said: {ddata}")
 
 
 ################### Admin Controlls
@@ -256,15 +228,11 @@ def connect(data):
     
     if data["buttonPressed"] == question["correct"]:
 
-        print(data["timedifference"])
-
-        onepercent = 100 / question["time"] * 1000
-
-        percentile = data["timedifference"] / onepercent
-
-        timeTaken = round(percentile)
+        timeRemaining = question["time"] - data["timedifference"]
+        percentage = timeRemaining / question["time"]
+        points = round(percentage * 1000)
         
-        rooms[room]["members"][name]["score"] += timeTaken
+        rooms[room]["members"][name]["score"] += points
         
         socketio.emit("changeScore", {"name": name, "score": rooms[room]["members"][name]["score"]}, to=adminroom)   
 
@@ -316,4 +284,4 @@ def disconnect():
 ########### Main
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=True, host="0.0.0.0", port=5001)
