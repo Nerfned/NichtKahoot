@@ -23,13 +23,14 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    color: white;
+    color: hsl(220, 60%, 2%);
 }
 
 .join {
     display: flex;
     flex-direction: row;
     width: 100%;
+    margin-top: 10px;
 }
 
 #join-button {
@@ -44,10 +45,6 @@
     margin-bottom: 5px;
 }
 
-.form-outline {
-    --mdb-surface-color: white;
-    --mdb-form-control-label-color: white;
-}
 
 .message-box {
     border-color: black;
@@ -97,7 +94,7 @@ h2 {
 
 .center {
     text-align: center;
-    color: white;
+    /* color: white; */
 }
 
 #admin-commit {
