@@ -131,6 +131,8 @@ def home():
 
     roomcode = request.args.get("code")    
 
+    isRoomCode = (roomcode is not None)
+
     if request.method == "POST":
         name = request.form.get("name")
         code = request.form.get("code")
@@ -138,10 +140,10 @@ def home():
         create = request.form.get("create", False)
 
         if not name and create == False:
-            return render_template("home.html", error = "Please enter a name.", code=code, name=name)
+            return render_template("home.html", error = "Please enter a name.", code=code, name=name, disableCreateNew = isRoomCode)
         
         if join != False and not code:
-            return render_template("home.html", error = "Please enter a room code.", code=code, name=name,)
+            return render_template("home.html", error = "Please enter a room code.", code=code, name=name, disableCreateNew = isRoomCode)
         
         room = code
         if create != False:
@@ -158,7 +160,7 @@ def home():
             session["adminroom"] = adminroom
             return redirect(url_for("admin"))
         elif code not in rooms:
-            return render_template("home.html", error = "Invalid code", code=code, name=name, disableCreateNew = True)
+            return render_template("home.html", error = "Invalid code", code=code, name=name, disableCreateNew = isRoomCode)
         
         if name == "admin" and len(room) == 16:
             session["adminroom"] = adminroom
@@ -166,7 +168,7 @@ def home():
         
         if name in rooms[room]["members"]:
             if sessiontoken != rooms[room]["members"][name]["sessiontoken"]:
-                return render_template("home.html", error = "Username already taken", code=code, name=name, disableCreateNew = True)
+                return render_template("home.html", error = "Username already taken", code=code, name=name, disableCreateNew = isRoomCode)
         else:
             session["sessiontoken"] = generate_unique_code(32)
 
@@ -175,10 +177,7 @@ def home():
 
         return redirect(url_for("quiz"))
 
-    if roomcode is not None:
-        return render_template("home.html", code=roomcode, disableCreateNew = True)
-    
-    return render_template("home.html")
+    return render_template("home.html", code=roomcode, disableCreateNew = isRoomCode)
 
 
 ################### Admin Controlls
