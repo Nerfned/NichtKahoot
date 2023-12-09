@@ -1,5 +1,7 @@
 
-
+.form-outline .form-control {
+    color: var(--mdb-surface-color);
+}
 
 .Preffered-Action .Option {
     margin: 5px;
@@ -51,7 +53,13 @@
     margin-bottom: 5px;
 }
 
-
+.kick-button {
+    margin-right: 30px;
+    padding: 4px;
+    padding-top: 1px;
+    margin-top: 4px;
+    height: 19px;
+}
 .message-box {
     /* border-color: black; */
     border-width: 2px;
@@ -71,15 +79,23 @@
     width: 100%;
 }
 
+.admin-user-hub {
+    margin-bottom: 15px;
+}
 .inputs {
     padding: 10px;
     display: flex;
+}
+.user {
+    margin-top: -15px;
 }
 
 h2 {
     text-align: center;
 }
-
+.admin-function {
+    margin-top: -10px;
+}
 #message {
     flex: 1;
 }
@@ -102,6 +118,13 @@ h2 {
     text-align: center;
     /* color: white; */
 }
+.admin-user {
+    text-align: start;
+}
+.admin-score {
+    text-align: end;
+}
+
 
 #admin-commit {
     margin-top: 10px;

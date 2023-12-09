@@ -99,8 +99,10 @@ def admin():
     questions = rooms[room]["questions"]
   
     tempusers = []
-    for name, score in users.items():
+    for name, score in users.items(): 
+        tempusers.sort(score)
         tempusers.append({"name": name, "score": score["score"] })
+    
 
     return render_template("admin.html", admincode=adminroom, usercode=room, questions=questions, currentquestion=currentquestion, users=tempusers)
 
@@ -212,6 +214,12 @@ def adminChange(data):
 
     updateQuestions(adminroom)
 
+@socketio.on("userKick")
+def userKick(name):
+       room = session.get("room")
+       if room in rooms:
+            del rooms[room]["members"][name]
+           
 
 ################### User Actions
 
