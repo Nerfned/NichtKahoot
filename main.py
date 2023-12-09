@@ -15,7 +15,6 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from flask_socketio import join_room, leave_room, send, SocketIO
 from string import ascii_uppercase
 import random
-import time
 import json
 import re
 
@@ -71,7 +70,7 @@ def updateQuestions(adminroom):
     content = questionobj[curr]
 
     socketio.emit("updateQuestions", content, to=room)
-    socketio.emit("updateQuestions", {"testing" : "testing"}, to=adminroom)
+    #socketio.emit("updateQuestions", {"testing" : "testing"}, to=adminroom) !!!!! THIS IS BROKEN, PLS FIX !!!!!
 
 # Gets the current question from a room
 def getCurrentQuestion(room):
@@ -159,7 +158,7 @@ def home():
             session["adminroom"] = adminroom
             return redirect(url_for("admin"))
         elif code not in rooms:
-            return render_template("home.html", error = "Invalid code", code=code, name=name)
+            return render_template("home.html", error = "Invalid code", code=code, name=name, disableCreateNew = True)
         
         if name == "admin" and len(room) == 16:
             session["adminroom"] = adminroom
@@ -167,7 +166,7 @@ def home():
         
         if name in rooms[room]["members"]:
             if sessiontoken != rooms[room]["members"][name]["sessiontoken"]:
-                return render_template("home.html", error = "Username already taken", code=code, name=name)
+                return render_template("home.html", error = "Username already taken", code=code, name=name, disableCreateNew = True)
         else:
             session["sessiontoken"] = generate_unique_code(32)
 

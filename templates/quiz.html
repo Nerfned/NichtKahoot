@@ -33,9 +33,13 @@
 
     // Timer Thingy
     const buttonDisableTimer = (timer, state) => {
+        // if the question was already solved by the user then don't enable the buttons
+        if('{{alreadySolved|tojson}}'){
+            return;
+        }
         
         timerobj = document.getElementById("timer")
-        
+                
         clearInterval(countdown);
         
         changeAllButtonDisabledStates(!state);
@@ -105,11 +109,9 @@
 </script>
 
 <!-- HTML Template -->
-<input type="hidden" name="isAlreadySolved" id="isAlreadySolved" value="{{alreadySolved}}">
-
 <div class="form quiz">
     <div class="timer">
-        <h1 id="timer">{{timer}}</h1>
+        <h1 id="timer">0</h1>
     </div>
 
     <div class="question">
@@ -119,15 +121,15 @@
     <div class="quiz-inputs">
         <div class="row">
             <button class="quiz-button btn btn-success" id="Button1" name="Button1"
-                onclick=Answer1()>{{question.btn1}}</button>
+                onclick=Answer1() disabled>{{question.btn1}}</button>
             <button class="quiz-button btn btn-danger" id="Button2" name="Button2"
-                onclick=Answer2()>{{question.btn2}}</button>
+                onclick=Answer2() disabled>{{question.btn2}}</button>
         </div>
         <div class="row">
             <button class="quiz-button btn btn-warning" id="Button3" name="Button3"
-                onclick=Answer3()>{{question.btn3}}</button>
+                onclick=Answer3() disabled>{{question.btn3}}</button>
             <button class="quiz-button btn btn-info" id="Button4" name="Button4"
-                onclick=Answer4()>{{question.btn4}}</button>
+                onclick=Answer4() disabled>{{question.btn4}}</button>
         </div>
     </div>
 </div>
