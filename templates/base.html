@@ -44,7 +44,7 @@
                 aria-controls="navbarExample01" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="fas fa-bars"></i>
             </button>
-            <button class="btn btn-primary" onclick="toggleTheme()">Change Design</button>
+          
 
         </div>
     </nav>
@@ -72,27 +72,3 @@
 
 </html>
 
-<script>
-   function toggleTheme() {
-    var currentTheme = document.documentElement.getAttribute('data-mdb-theme');
-    var newTheme = 'light';
-
-    if (currentTheme === 'dark') {
-        newTheme = 'light';
-    } else {
-        newTheme = 'dark';
-    }
-
-    document.documentElement.setAttribute('data-mdb-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-}
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    var storedTheme = localStorage.getItem('theme');
-    if (storedTheme) {
-        document.documentElement.setAttribute('data-mdb-theme', storedTheme);
-    }
-});
-
-</script>

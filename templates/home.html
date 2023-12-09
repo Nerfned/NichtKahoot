@@ -2,43 +2,78 @@
 
 {% block content %}
 
-<form method="post" class="buttons" class="row g-3 needs-validation" novalidate>
-    
-    
-    
-    <h1>Enter a Quizroom</h1>
+<div class="home" >
 
-    {% if error %}
-    <div class="card text-bg-danger text-center" id="alert">
-        <div class="card-body">
-            <h5 class="card-title">{{error}}</h5>
-        </div>
-    </div>
-    {% endif %}
-    
-    <div class="Preffered-Action">
-        <div class="Option">
-            <div class="form-outline" data-mdb-input-init>
-                <input class="form-control" id="name" type="text" placeholder="Pick a Name!" name="name" value="{{name}}"
-                    required />
-                <label class="form-label" for="name">Name:</label>
-                <div class="invalid-feedback">Please choose a username.</div>
+    <form method="post" class="buttons" novalidate>
+            
+            
+
+            <h1>Enter a Quizroom</h1>
+
+        {% if error %}
+        <div class="card text-bg-danger text-center" id="alert">
+            <div class="card-body">
+                <h5 class="card-title">{{error}}</h5>
             </div>
-    
-            <div class="join ">
-                <div class="form-outline" data-mdb-input-init>
-                    <input class="form-control" id="code" type="text" name="code" value="{{code}}" />
-                    <label class="form-label" for="code">Room Code</label>
-                </div>
-                <button class="btn btn-primary" type="submit" name="join" id="join-button" data-mdb-ripple-init>Join</button>
-            </div>
-        </div>
-        
-        {% if not disableCreateNew %}
-        <div class="create-New Option">
-            <button class="btn btn-primary" id="create-btn" type="submit" name="create" data-mdb-ripple-init>Create a Room</button>
         </div>
         {% endif %}
-    </div>
-</form>
+
+        <div class="Preffered-Action">
+            <div class="Option">
+                <div class="form-outline" data-mdb-input-init>
+                    <input class="form-control" id="name" type="text" placeholder="Pick a Name!" name="name"
+                        value="{{name}}" required />
+                    <label class="form-label" for="name">Name:</label>
+                    <div class="invalid-feedback">Please choose a username.</div>
+                </div>
+
+                <div class="join ">
+                    <div class="form-outline" data-mdb-input-init>
+                        <input class="form-control" id="code" type="text" name="code" value="{{code}}" />
+                        <label class="form-label" for="code">Room Code</label>
+                    </div>
+                    <button class="btn btn-primary" type="submit" name="join" id="join-button"
+                        data-mdb-ripple-init>Join</button>
+                </div>
+            </div>
+            
+            {% if not disableCreateNew %}
+            <div class="create-New Option">
+                <button class="btn btn-primary" id="create-btn" type="submit" name="create" data-mdb-ripple-init>Create a
+                    Room</button>
+                </div>
+                {% endif %}
+                
+                
+            </div>
+            <div class="create-New Option">
+            <button type="button" id="create-btn" class="buttons btn btn-primary" onclick="toggleTheme()">Change Design</button>
+            </div>
+        </form>
+        
+</div>
+<script>
+    function toggleTheme() {
+        var currentTheme = document.documentElement.getAttribute('data-mdb-theme');
+        var newTheme = 'light';
+
+        if (currentTheme === 'dark') {
+            newTheme = 'light';
+        } else {
+            newTheme = 'dark';
+        }
+
+        document.documentElement.setAttribute('data-mdb-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        var storedTheme = localStorage.getItem('theme');
+        if (storedTheme) {
+            document.documentElement.setAttribute('data-mdb-theme', storedTheme);
+        }
+    });
+
+</script>
 {% endblock %}

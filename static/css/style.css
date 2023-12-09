@@ -44,6 +44,9 @@
     width: 100%;
 }
 
+#create-design {
+    width: 50%;
+}
 #alert {
     margin-bottom: 5px;
 }
