@@ -21,7 +21,7 @@
     <div class="quiz-control">
         <p>Current question: <br><div id="currentquestion">{{currentquestion}}</div></p>
         <button class="btn btn-primary" id="button-prev" name="previous" onclick="previous()">&laquo;</button>
-        <button class="btn btn-primary" id="results" name="results">Ergebnis</button>
+        <button class="btn btn-primary" id="results" name="results" onclick="results()">Ergebnis</button>
         <button class="btn btn-primary" id="button-next" name="next" onclick="next()">&raquo;</button>
     </div>
 
@@ -88,6 +88,10 @@
 
             document.getElementById("edit-questions").innerHTML = questions;
         }
+
+        const results = () => {
+            socketio.emit("results", {data: true});
+        };
 
         const RemoveUser = (name) => {
             document.getElementById(name).remove();

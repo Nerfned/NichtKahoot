@@ -212,6 +212,13 @@ def adminChange(data):
 
     updateQuestions(adminroom)
 
+@socketio.on("results")
+def results(data):
+    adminroom = session.get("adminroom")
+    room = getRoomFromAdminRoom(adminroom)
+
+    pass
+
 
 ################### User Actions
 

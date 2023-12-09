@@ -3,12 +3,8 @@
 {% block content %}
 
 <div class="home" >
-
     <form method="post" class="buttons" novalidate>
-            
-            
-
-            <h1>Enter a Quizroom</h1>
+        <h1>Enter a Quizroom</h1>
 
         {% if error %}
         <div class="card text-bg-danger text-center" id="alert">
@@ -39,17 +35,16 @@
             
             {% if not disableCreateNew %}
             <div class="create-New Option">
-                <button class="btn btn-primary" id="create-btn" type="submit" name="create" data-mdb-ripple-init>Create a
-                    Room</button>
-                </div>
-                {% endif %}
-                
-                
+                <button class="btn btn-primary" id="create-btn" type="submit" name="create" data-mdb-ripple-init>Create a Room</button>
             </div>
-            <div class="create-New Option">
+            {% endif %}
+                
+        </div>
+        
+        <div class="create-New Option">
             <button type="button" id="create-btn" class="buttons btn btn-primary" onclick="toggleTheme()">Change Design</button>
-            </div>
-        </form>
+        </div>
+    </form>
         
 </div>
 <script>
