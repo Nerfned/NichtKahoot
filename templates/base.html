@@ -69,6 +69,16 @@
                     <script type="text/javascript"
                         src="{{ url_for('static', filename='mdb5-free-standard/js/mdb.umd.min.js' )}}"></script>
 </body>
-
+<script>
+ 
+ 
+ document.addEventListener('DOMContentLoaded', () => {
+     var storedTheme = localStorage.getItem('theme');
+     if (storedTheme) {
+         document.documentElement.setAttribute('data-mdb-theme', storedTheme);
+     }
+ });
+ 
+ </script>
 </html>
 

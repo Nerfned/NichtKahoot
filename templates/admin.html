@@ -19,7 +19,9 @@
     </div>
 
     <div class="quiz-control">
-        <p>Current question: <br><div id="currentquestion">{{currentquestion}}</div></p>
+        <p>Current question: <br>
+        <div id="currentquestion">{{currentquestion}}</div>
+        </p>
         <button class="btn btn-primary" id="button-prev" name="previous" onclick="previous()">&laquo;</button>
         <button class="btn btn-primary" id="results" name="results" onclick="results()">Ergebnis</button>
         <button class="btn btn-primary" id="button-next" name="next" onclick="next()">&raquo;</button>
@@ -34,60 +36,75 @@
     </div>
 
     <div class="connected-users center">
-        <h2>User im Raum</h2>
+        <h2 class="admin-user-hub">User im Raum</h2>
         <div class="users" id="users">
             {% for user in users %}
             <div class="user" id="{{user.name}}">
-                <strong>{{user.name}}</strong>
-                <button class="kick-button btn btn-danger" name="kick" value="{{user.name}}">Kick</button>
-                <div class="score">{{user.score}}</div>
+                <div class="d-flex p-2  justify-content-between">
+                    <strong class="admin-user">{{user.name}}</strong>
+                    <div class="justify-content-between">
+                        <button class="kick-button btn btn-danger" name="kick" onClick="kickUser(user.name)"
+                            value="{{user.name}}">Kick</button>
+                        <div class="admin-score">Punkte: {{user.score}}</div>
+                    </div>
+                </div>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
     </div>
+</div>
 
-    <!-- JavaScript dies das -->
-    <script type="text/javascript">
-        var socketio = io();
 
-        const users = document.getElementById("users")
 
-        const DisplayUser = (name, score) => {
-            const content = `
-        <div class="user" id="${name}">
-            <strong>${name}</strong>
-            <button class="kick-button btn btn-danger" name="kick" value="${name}">Kick</button>
-            <div class="score">${score}</div>
-        </div>
+</div>
+</div>
+</div>
+<!-- JavaScript dies das -->
+<script type="text/javascript">
+    var socketio = io();
+
+    const users = document.getElementById("users")
+    let ranking;
+    const DisplayUser = (name, score) => {
+        const content = `
+            <div class="user" id="${name}" nodeValue="${score}">
+                <div class="d-flex p-2  justify-content-between">
+                    <strong class="admin-user">${name}</strong>
+                  <div class="d-flex p-2  justify-content-between admin-function">
+                        <button class="kick-button btn btn-danger" name="kick" onClick="kickUser(${name})" value="${name}">Kick</button>
+                        <div class="admin-score">Punkte: ${score}</div>
+                    <div> 
+                </div>
+            </div>
         `;
+        users.innerHTML += content;
+    };
 
-            users.innerHTML += content;
-        };
+    const setError = (errormsg) => {
+        const errorfield = document.getElementById("error");
 
-        const setError = (errormsg) => {
-            const errorfield = document.getElementById("error");
-            
-            if (errorfield != null){
-                errorfield.innerHTML = errormsg;
-                return;
-            }
+        if (errorfield != null) {
+            errorfield.innerHTML = errormsg;
+            return;
+        }
 
-            document.getElementById("error-Container").innerHTML = `
+        document.getElementById("error-Container").innerHTML = `
             <div class="card text-bg-danger text-center" id="alert-admin">
                 <div class="card-body">
                     <h5 class="card-title" id="error">${errormsg}</h5>
                 </div>
             </div>
             `;
-        }
+    }
 
-        /////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////
 
-        const UpdateQuestion = (curr, questions) => {
-            document.getElementById("currentquestion").innerHTML = curr;
+    const UpdateQuestion = (curr, questions) => {
+        document.getElementById("currentquestion").innerHTML = curr;
 
-            document.getElementById("edit-questions").innerHTML = questions;
-        }
+        document.getElementById("edit-questions").innerHTML = questions;
+    }
+
 
         const results = () => {
             socketio.emit("results", {data: true});
@@ -97,45 +114,66 @@
             document.getElementById(name).remove();
         };
 
-        const previous = () => {
-            socketio.emit("previous", {data: true});
-        };
+    const previous = () => {
+        socketio.emit("previous", {data: true});
+    };
+
+    const next = () => {
+        socketio.emit("next", {data: true});
+    };
+
+    const adminCommit = () => {
+        questions = document.getElementById("edit-questions").value
+
+        socketio.emit("commit", {data: {questions: questions}});
+
+        alert("Commit Sent");
+    }
+
+    /// STUPID SHIT I STARTED ps .j
+    const kickUser = (user) => {
+        socketio.emit("userKick", {data: user.id});
+        document.getElementById(user.id).remove();
+    };
+
+    ///////////////////////////////////////////////////////////// Sockets
+
+    socketio.on("error", (data) => {
+        setError(data);
+    });
+
+    socketio.on("userJoin", (data) => {
+        DisplayUser(data.name, data.score);
         
-        const next = () => {
-            socketio.emit("next", {data: true});
-        };
+    });
 
-        const adminCommit = () => {
-            questions = document.getElementById("edit-questions").value
+    socketio.on("updateQuestions", (data) => {
+        alert(data);
+        UpdateQuestion(data.currentquestion, data.questions);
+    });
 
-            socketio.emit("commit", {data: {questions: questions}});
+    socketio.on("userLeve", (data) => {
+        RemoveUser(data.name);
+    });
 
-            alert("Commit Sent");
-        }
+    /// If it breaks Im gonna cry (Why did i do it like that no one knows).j
+    socketio.on("changeScore", (data) => {
+        document.getElementById(data.name).getElementsByClassName("admin-score")[0].textContent ="Punkte: " + data.score;
 
-        ///////////////////////////////////////////////////////////// Sockets
+        playingUsers = Array.from(users.children);
 
-        socketio.on("error", (data) => {
-            setError(data);
-        });
-        
-        socketio.on("userJoin", (data) => {
-            DisplayUser(data.name, data.score);
-        });
-        
-        socketio.on("updateQuestions", (data) => {
-            alert(data);
-            UpdateQuestion(data.currentquestion, data.questions);
+        playingUsers.sort(function (a, b) {
+            let scoreA = parseInt(a.getElementsByClassName("admin-score")[0].textContent.split(": ")[1]);
+            let scoreB = parseInt(b.getElementsByClassName("admin-score")[0].textContent.split(": ")[1]);
+            return scoreB - scoreA;
         });
 
-        socketio.on("userLeve", (data) => {
-            RemoveUser(data.name);
+        playingUsers.forEach(function (node) {
+            users.appendChild(node);
         });
 
-        socketio.on("changeScore", (data) => {
-            document.getElementById(data.name).getElementsByClassName("score")[0].textContent = data.score;
-        });
-    </script>
+    });
+</script>
 </div>
 <!--</form>-->
 {% endblock %}
