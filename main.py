@@ -219,6 +219,7 @@ def userKick(name):
        room = session.get("room")
        if room in rooms:
             del rooms[room]["members"][name]
+            
            
 
 ################### User Actions

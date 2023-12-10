@@ -43,7 +43,8 @@
                 <div class="d-flex p-2  justify-content-between">
                     <strong class="admin-user">{{user.name}}</strong>
                     <div class="justify-content-between">
-                        <button class="kick-button btn btn-danger" name="kick" onClick="kickUser(user.name)" value="{{user.name}}">Kick</button>
+                        <button class="kick-button btn btn-danger" name="kick" onClick="kickUser(user.name)"
+                            value="{{user.name}}">Kick</button>
                         <div class="admin-score">Punkte: {{user.score}}</div>
                     </div>
                 </div>
@@ -61,21 +62,21 @@
 <!-- JavaScript dies das -->
 <script type="text/javascript">
     var socketio = io();
-    
-    const users = document.getElementById("users")
 
+    const users = document.getElementById("users")
+    let ranking;
     const DisplayUser = (name, score) => {
         const content = `
-            <div class="user" id="${name}">
+            <div class="user" id="${name}" nodeValue="${score}">
                 <div class="d-flex p-2  justify-content-between">
-                        <strong class="admin-user">${name}</strong>
-                          <div class="d-flex p-2  justify-content-between admin-function">
-                        <button class="kick-button btn btn-danger" name="kick" onClick="kickUser(${name.value})" value="${name}">Kick</button>
-                        <div class="admin-score">Punkte: ${score}</div> 
+                    <strong class="admin-user">${name}</strong>
+                  <div class="d-flex p-2  justify-content-between admin-function">
+                        <button class="kick-button btn btn-danger" name="kick" onClick="kickUser(${name})" value="${name}">Kick</button>
+                        <div class="admin-score">Punkte: ${score}</div>
+                    <div> 
                 </div>
             </div>
         `;
-
         users.innerHTML += content;
     };
 
@@ -124,13 +125,12 @@
         alert("Commit Sent");
     }
 
+    /// STUPID SHIT I STARTED ps .j
     const kickUser = (user) => {
-        console.log(user)
-        
-        socketio.emit("userKick", {data: user});
-        document.getElementById(name).remove();
+        socketio.emit("userKick", {data: user.id});
+        document.getElementById(user.id).remove();
     };
-    
+
     ///////////////////////////////////////////////////////////// Sockets
 
     socketio.on("error", (data) => {
@@ -139,6 +139,7 @@
 
     socketio.on("userJoin", (data) => {
         DisplayUser(data.name, data.score);
+        
     });
 
     socketio.on("updateQuestions", (data) => {
@@ -147,12 +148,25 @@
     });
 
     socketio.on("userLeve", (data) => {
-        console.log(data.name);
         RemoveUser(data.name);
     });
 
+    /// If it breaks Im gonna cry (Why did i do it like that no one knows).j
     socketio.on("changeScore", (data) => {
-        document.getElementById(data.name).getElementsByClassName("admin-score")[0].textContent = data.score;
+        document.getElementById(data.name).getElementsByClassName("admin-score")[0].textContent ="Punkte: " + data.score;
+
+        playingUsers = Array.from(users.children);
+
+        playingUsers.sort(function (a, b) {
+            let scoreA = parseInt(a.getElementsByClassName("admin-score")[0].textContent.split(": ")[1]);
+            let scoreB = parseInt(b.getElementsByClassName("admin-score")[0].textContent.split(": ")[1]);
+            return scoreB - scoreA;
+        });
+
+        playingUsers.forEach(function (node) {
+            users.appendChild(node);
+        });
+
     });
 </script>
 </div>
