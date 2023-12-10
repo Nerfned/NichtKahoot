@@ -24,6 +24,7 @@ socketio = SocketIO(app)
 
 rooms = {}
 adminrooms = {}
+dashboard = {}
 
 ################### Functions
 
@@ -170,8 +171,8 @@ def home():
         elif code not in rooms:
             return render_template("home.html", error = "Invalid code", code=code, name=name, disableCreateNew = isRoomCode)
         
-        if name == "admin" and len(room) == 16:
-            session["adminroom"] = adminroom
+        if name == "admin" and room in adminrooms:
+            session["adminroom"] = room
             return redirect(url_for("admin"))
         
         if name in rooms[room]["members"]:
@@ -186,6 +187,24 @@ def home():
         return redirect(url_for("quiz"))
 
     return render_template("home.html", code=roomcode, disableCreateNew = isRoomCode)
+
+@app.route("/results")
+def results():
+    
+    
+    currentquestion = rooms[room]["currentquestion"]
+
+    questions = rooms[room]["questions"]
+  
+    tempusers = []
+    users = rooms[room]["members"]
+    for name, score in users.items(): 
+        tempusers.sort(score)
+        tempusers.append({"name": name, "score": score["score"] })
+
+    question = questions[currentquestion]
+
+    return render_template("results.html", roomcode=room, question=question, users=tempusers)
 
 
 ################### Admin Controlls
@@ -214,22 +233,19 @@ def adminChange(data):
 
     updateQuestions(adminroom)
 
-
 @socketio.on("userKick")
 def userKick(name):
-       room = session.get("room")
-       if room in rooms:
-            del rooms[room]["members"][name]
-            
-           
-
+    room = session.get("room")
+    
+    if room in rooms:
+        del rooms[room]["members"][name]
+         
 @socketio.on("results")
 def results(data):
     adminroom = session.get("adminroom")
     room = getRoomFromAdminRoom(adminroom)
 
     pass
-
 
 
 ################### User Actions
