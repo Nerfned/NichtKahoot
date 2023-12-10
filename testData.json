@@ -1,5 +1,15 @@
 [
     {
+        "text": "Warteraum", 
+        "btn1": "", 
+        "btn2": "", 
+        "btn3": "", 
+        "btn4": "", 
+        "correct": 4, 
+        "time": 0, 
+        "solvedBy": []
+    },
+    {
         "text": "Wer schwimmt den ganzen Tag im Aquarium?",
         "btn1": "Friedrich",
         "btn2": "Patricia",
@@ -97,6 +107,16 @@
         "btn4": "Ich bin zu nüchtern für den scheiß",
         "correct": 3,
         "time": 30,
+        "solvedBy": []
+    },
+    {
+        "text": "Thats it, ", 
+        "btn1": "", 
+        "btn2": "", 
+        "btn3": "", 
+        "btn4": "", 
+        "correct": 4, 
+        "time": 0, 
         "solvedBy": []
     }
 ]

@@ -214,6 +214,7 @@ def adminChange(data):
 
     updateQuestions(adminroom)
 
+
 @socketio.on("userKick")
 def userKick(name):
        room = session.get("room")
@@ -221,6 +222,15 @@ def userKick(name):
             del rooms[room]["members"][name]
             
            
+
+@socketio.on("results")
+def results(data):
+    adminroom = session.get("adminroom")
+    room = getRoomFromAdminRoom(adminroom)
+
+    pass
+
+
 
 ################### User Actions
 
