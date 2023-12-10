@@ -106,6 +106,12 @@
         UpdateValues(data);
     });
 
+    socketio.on("gettingKicked", (user) =>{
+        if (user == session.get("name")) {
+            
+        }
+    } )
+
 </script>
 
 <!-- HTML Template -->
