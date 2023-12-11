@@ -61,17 +61,22 @@ def changeCurrentQuestion(data, skipquestion):
 # Sends updated questions to all admin and user rooms
 def updateQuestions(adminroom):
     room = getRoomFromAdminRoom(adminroom)
-            
     questionobj = getCurrentQuestion(room)
+    dashboardcode = getDashboardCodeFromRoomCode(room)
 
     curr = rooms[room]["currentquestion"]
-
     questionobj[curr]["currentquestion"] = curr
-
     content = questionobj[curr]
 
     socketio.emit("updateQuestions", content, to=room)
+    socketio.emit("updateQuestions", {"content": content, "toggle": True}, to=dashboardcode)
     #socketio.emit("updateQuestions", {"testing" : "testing"}, to=adminroom) !!!!! THIS IS BROKEN, PLS FIX !!!!!
+
+def getDashboardCodeFromRoomCode(room):
+    keys = [i for i in dashboard.keys()]
+    values = [i for i in dashboard.values()]
+    
+    return keys[values.index(room)]
 
 # Gets the current question from a room
 def getCurrentQuestion(room):
@@ -82,6 +87,20 @@ def getCurrentQuestion(room):
 # Gets the room code from adminroomcode
 def getRoomFromAdminRoom(adminroom):
     return adminrooms[adminroom]
+
+def getAndSortUserByScore(room, limit):
+    users = rooms[room]["members"]
+
+    # do some sick sortin' right here
+    
+    tempusers = []
+    for name, score in users.items(): 
+        tempusers.append({"name": name, "score": score["score"] })
+
+    if limit > 0:
+        tempusers = tempusers[:limit]
+
+    return tempusers
 
 
 #################### Routs
@@ -95,20 +114,11 @@ def admin():
     
     room = adminrooms[adminroom]
     currentquestion = rooms[room]["currentquestion"]
-    users = rooms[room]["members"]
-
     questions = rooms[room]["questions"]
-  
-    tempusers = []
-    for name, score in users.items(): 
-        tempusers.sort(score)
-        tempusers.append({"name": name, "score": score["score"] })
 
-    keys = [i for i in dashboard.keys()]
-    values = [i for i in dashboard.values()]
-    dashboardcode = keys[values.index(room)]
+    dashboardcode = getDashboardCodeFromRoomCode(room)
 
-    return render_template("admin.html", admincode=adminroom, usercode=room, dashboardcode=dashboardcode, questions=questions, currentquestion=currentquestion, users=tempusers)
+    return render_template("admin.html", admincode=adminroom, usercode=room, dashboardcode=dashboardcode, questions=questions, currentquestion=currentquestion, users=getAndSortUserByScore(room, -1))
 
 @app.route("/quiz", methods=["POST", "GET"])
 def quiz():
@@ -257,8 +267,9 @@ def userKick(name):
 def results(data):
     adminroom = session.get("adminroom")
     room = getRoomFromAdminRoom(adminroom)
+    dashboardcode = getDashboardCodeFromRoomCode(room)
 
-    pass
+    socketio.emit("leaderboard", {"user": getAndSortUserByScore(room, 4), "toggle": False}, to=dashboardcode)
 
 
 ################### User Actions
