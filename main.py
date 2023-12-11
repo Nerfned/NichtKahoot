@@ -265,9 +265,11 @@ def userKick(name):
 def results(data):
     adminroom = session.get("adminroom")
     room = getRoomFromAdminRoom(adminroom)
+
     dashboardcode = getDashboardCodeFromRoomCode(room)
 
     socketio.emit("leaderboard", {"user": getAndSortUserByScore(room, 4), "toggle": False}, to=dashboardcode)
+
 
 
 ################### User Actions
@@ -277,8 +279,10 @@ def answer(data):
     room = session.get("room")
     name = session.get("name")
     adminroom = session.get("adminroom")
+
     
     question = getCurrentQuestion(room)
+
 
     if room is None or name is None:
         return
@@ -287,6 +291,11 @@ def answer(data):
         leave_room(room)
         return
     
+    if data["buttonPressed"]:
+
+        count =  data["buttonPressed"]  
+        socketio.emit("countQuestion",{"count": count}, to=dashboardcode)
+
     if data["buttonPressed"] == question["correct"]:
 
         timeRemaining = question["time"] - data["timedifference"]
