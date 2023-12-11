@@ -20,11 +20,35 @@ Room Code : {{roomcode}}
 <div class="Leaderboard">
     Aktuelles Leaderboard:
     {% for user in users %}
-        <div class="person">{{user.name}} : {{user.score}}</div>
+    <div class="person">{{user.name}} : {{user.score}}</div>
     {% endfor %}
 </div>
 
 <script>
-    
+    let questionCount = [0, 0, 0, 0];
+
+
+    socketio.on("countQuestion", (data) => {
+        console.log("Klappt")
+        switch (data.count) {
+            case 1:
+                console.log(1)
+                questionCount[0] = + 1;
+                break;
+            case 2:
+                console.log(2)
+                questionCount[1] = + 1;
+                break;
+            case 3:
+                console.log(3)
+                questionCount[2] = + 1;
+                break;
+            case 4:
+                console.log(4)
+                questionCount[3] = + 1;
+                break;
+        }
+    })
+
 </script>
 {% endblock %}

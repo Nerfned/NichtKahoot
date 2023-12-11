@@ -103,12 +103,9 @@ def admin():
     for name, score in users.items(): 
         tempusers.sort(score)
         tempusers.append({"name": name, "score": score["score"] })
+       
 
-    keys = [i for i in dashboard.keys()]
-    values = [i for i in dashboard.values()]
-    dashboardcode = keys[values.index(room)]
-
-    return render_template("admin.html", admincode=adminroom, usercode=room, dashboardcode=dashboardcode, questions=questions, currentquestion=currentquestion, users=tempusers)
+    return render_template("admin.html", admincode=adminroom, usercode=room, questions=questions, currentquestion=currentquestion, users=tempusers)
 
 @app.route("/quiz", methods=["POST", "GET"])
 def quiz():
@@ -132,6 +129,8 @@ def quiz():
 
     hasUserAlreadyAnswered = name in thisQuestion["solvedBy"]
 
+    print(hasUserAlreadyAnswered)
+
     return render_template("quiz.html", question=thisQuestion, alreadySolved=hasUserAlreadyAnswered)
 
 @app.route("/", methods=["POST", "GET"])
@@ -139,12 +138,9 @@ def home():
     sessiontoken = session.get("sessiontoken")
     session.clear()
 
-    roomcode = request.args.get("code")
-    
-    isRoomCode = (roomcode is not None)
+    roomcode = request.args.get("code")    
 
-    if roomcode is None:
-        roomcode = ""
+    isRoomCode = (roomcode is not None)
 
     if request.method == "POST":
         name = request.form.get("name")
@@ -161,19 +157,16 @@ def home():
         room = code
         if create != False:
             room = generate_unique_code(4)
-            adminroom = generate_unique_code(24)
-            dashboardcode = generate_unique_code(16)
+            adminroom = generate_unique_code(16)
             
             rooms[room] = {
                 "members": {},
                 "currentquestion": None,
                 "questions": []
+                
                 }
-            
             adminrooms[adminroom] = room
-            dashboard[dashboardcode] = room
-            print("DB Code for room " + room + ": " + dashboardcode)
-
+            
             session["adminroom"] = adminroom
             return redirect(url_for("admin"))
         elif code not in rooms:
@@ -198,26 +191,20 @@ def home():
 
 @app.route("/results")
 def results():
-    dashboardcode = request.args.get("dashboard")
-
-    if dashboardcode is None or dashboardcode not in dashboard:
-        return redirect(url_for("home"))
-
-    room = dashboard[dashboardcode]
-    session["room"] = room
+    room = session.get("room")
     currentquestion = rooms[room]["currentquestion"]
+
     questions = rooms[room]["questions"]
-
-    # Sort Users Here
-
+  
     tempusers = []
     users = rooms[room]["members"]
-    for name, score in users.items():
+    for name, score in users.items(): 
+        tempusers.sort(score)
         tempusers.append({"name": name, "score": score["score"] })
 
-    question = json.loads(questions)[currentquestion]
+    question = questions[currentquestion]
 
-    return render_template("results.html", roomcode=room, question=question, users=tempusers[:4])
+    return render_template("results.html", roomcode=room, question=question, users=tempusers)
 
 
 ################### Admin Controlls
@@ -245,9 +232,10 @@ def adminChange(data):
         rooms[room]["currentquestion"] = 0
 
     updateQuestions(adminroom)
-
+       
 @socketio.on("userKick")
 def userKick(name):
+
     room = session.get("room")
     
     if room in rooms:
@@ -257,9 +245,12 @@ def userKick(name):
 def results(data):
     adminroom = session.get("adminroom")
     room = getRoomFromAdminRoom(adminroom)
-    members = rooms[room]["members"]
-    sorted_members = dict(sorted(members.items(), key=lambda item: item[1]["score"]))
+    
     pass
+
+
+            
+           
 
 
 ################### User Actions
@@ -269,13 +260,12 @@ def answer(data):
     room = session.get("room")
     name = session.get("name")
     adminroom = session.get("adminroom")
-   
-    dashboardcode = request.args.get("dashboard")
-
-
+    
     currentQuestion = rooms[room]["currentquestion"]
 
     question = json.loads(rooms[room]["questions"])[currentQuestion]
+
+
 
     if room is None or name is None:
         return
@@ -284,10 +274,9 @@ def answer(data):
         leave_room(room)
         return
     
-    if data["buttonPressed"]:
 
-        count =  data["buttonPressed"]  
-        socketio.emit("countQuestion",{"count": count}, to=dashboardcode)
+    
+
 
     if data["buttonPressed"] == question["correct"]:
 
@@ -298,7 +287,8 @@ def answer(data):
         question["solvedBy"].append(name)
         
         rooms[room]["members"][name]["score"] += points
-        
+        members = rooms[room]["members"]
+        sorted_members = dict(sorted(members.items(), key=lambda item: item[1]["score"]))     
         socketio.emit("changeScore", {"name": name, "score": rooms[room]["members"][name]["score"]}, to=adminroom)   
 
 
@@ -309,8 +299,7 @@ def connect(auth):
     room = session.get("room")
     name = session.get("name")
     adminroom = session.get("adminroom")
-    dashboardcode = request.args.get("dashboard")
-
+    
     if room is None or name is None:
         return
     
@@ -320,8 +309,6 @@ def connect(auth):
     
     if adminroom is not None:
         join_room(adminroom)
-    elif  dashboardcode is not None:
-        join_room(dashboardcode)
     else:
         join_room(room)
         socketio.emit("userJoin", {"name": name, "score": 0}, to=adminroom)
@@ -335,17 +322,15 @@ def disconnect():
     room = session.get("room")
     adminroom = session.get("adminroom")
     name = session.get("name")
-    dashboardcode = request.args.get("dashboard")
 
     if adminroom is None:
         leave_room(room)
         if room in rooms:
             del rooms[room]["members"][name]
             socketio.emit("userLeve", {"name": name}, to=adminroom)
-    elif dashboardcode is None:
-        leave_room(dashboardcode)
     else:
         leave_room(adminroom)
+
 
     send({"name": name, "message": "has left the room"}, to=room)
     print(f"{name} has left room {room}")
