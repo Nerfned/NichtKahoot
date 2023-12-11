@@ -2,28 +2,26 @@
 
 {% block content %}
 
-Room Code : ROOMCODE
+Room Code : {{roomcode}}
 
 <div class="not-Results">
-    Aktuelle Frage:
+    {{question.text}}
 
     <div class="Answers">
         <div class="Answer">
-            <div>Antwort 1 : Anzahl</div>
-            <div>Antwort 2 : Anzahl</div>
-            <div>Antwort 3 : Anzahl</div>
-            <div>Antwort 4 : Anzahl</div>
+            <div>{{question.btn1}} : Anzahl</div>
+            <div>{{question.btn2}} : Anzahl</div>
+            <div>{{question.btn3}} : Anzahl</div>
+            <div>{{question.btn4}} : Anzahl</div>
         </div>
     </div>
 </div>
 
-<div class="Results">
-    Aktuelle Results:
-    <div class="person">Name : Score</div>
-    <div class="person">Name : Score</div>
-    <div class="person">Name : Score</div>
-    <div class="person">Name : Score</div>
-    <div class="person">Name : Score</div>
+<div class="Leaderboard">
+    Aktuelles Leaderboard:
+    {% for user in users %}
+        <div class="person">{{user.name}} : {{user.score}}</div>
+    {% endfor %}
 </div>
 
 <script>

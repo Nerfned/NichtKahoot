@@ -2,8 +2,7 @@
 
 {% block content %}
 
-<div class="home" >
-
+<div class="home">
     <form method="post" class="buttons" novalidate>
         <h1>Enter a Quizroom</h1>
         {% if error %}
@@ -32,25 +31,21 @@
                         data-mdb-ripple-init>Join</button>
                 </div>
             </div>
-            
             {% if not disableCreateNew %}
-            <div class="create-New Option">
-
-                <button class="btn btn-primary" id="create-btn" type="submit" name="create" data-mdb-ripple-init>Create a Room</button>
-            </div>
-            {% endif %}
-                
+                <div class="create-New Option">
+                    <button class="btn btn-primary" id="create-btn" type="submit" name="create" data-mdb-ripple-init>Create a Room</button>
+                </div>
+            {% endif %}        
         </div>
         
         <div class="create-New Option">
             <button type="button" id="create-btn" class="buttons btn btn-primary" onclick="toggleTheme()">Change Design</button>
         </div>
     </form>
-        
-
 </div>
+
 <script>
-    function toggleTheme() {
+    var toggleTheme = () => {
         var currentTheme = document.documentElement.getAttribute('data-mdb-theme');
         var newTheme = 'light';
 
@@ -63,7 +58,6 @@
         document.documentElement.setAttribute('data-mdb-theme', newTheme);
         localStorage.setItem('theme', newTheme);
     }
-
 
     document.addEventListener('DOMContentLoaded', () => {
         var storedTheme = localStorage.getItem('theme');
