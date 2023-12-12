@@ -22,11 +22,13 @@
     <div class="quiz-control">
         <p>
             Current question: <br>
-            <div id="currentquestion">{{currentquestion}}</div>
-        </p>
-        <button class="btn btn-primary" id="button-prev" name="previous" onclick="previous()">&laquo;</button>
-        <button class="btn btn-primary" id="results" name="results" onclick="results()">Ergebnis</button>
-        <button class="btn btn-primary" id="button-next" name="next" onclick="next()">&raquo;</button>
+        <div id="currentquestion"></div>
+        </p>     
+        <div class='control'>
+            <button class="btn btn-primary" id="button-prev" name="previous" onclick="previous()">&laquo;</button>
+            <button class="btn btn-primary" id="results" name="results" onclick="results()">Ergebnis</button>
+            <button class="btn btn-primary" id="button-next" name="next" onclick="next()">&raquo;</button>
+        </div>
     </div>
 
     <div class="edit-questions">
@@ -41,15 +43,16 @@
         <h2 class="admin-user-hub">User im Raum</h2>
         <div class="users" id="users">
             {% for user in users %}
-                <div class="user" id="{{user.name}}">
-                    <div class="d-flex p-2  justify-content-between">
-                        <strong class="admin-user">{{user.name}}</strong>
-                        <div class="justify-content-between">
-                            <button class="kick-button btn btn-danger" name="kick" onClick="kickUser(user.name)" value="{{user.name}}">Kick</button>
-                            <div class="admin-score">Punkte: {{user.score}}</div>
-                        </div>
+            <div class="user" id="{{user.name}}">
+                <div class="d-flex p-2  justify-content-between">
+                    <strong class="admin-user">{{user.name}}</strong>
+                    <div class="justify-content-between">
+                        <button class="kick-button btn btn-danger" name="kick" onClick="kickUser(user.name)"
+                            value="{{user.name}}">Kick</button>
+                        <div class="admin-score">Punkte: {{user.score}}</div>
                     </div>
                 </div>
+            </div>
             {% endfor %}
         </div>
     </div>
@@ -60,6 +63,7 @@
 
     const users = document.getElementById("users")
     let ranking;
+    let questionCount = 0;
     const DisplayUser = (name, score) => {
         const content = `
             <div class="user" id="${name}" nodeValue="${score}">
@@ -74,6 +78,9 @@
         `;
         users.innerHTML += content;
     };
+    const showResult = () => {
+        socketio.emit("userKick", {data: user.id});
+    }
 
     const setError = (errormsg) => {
         const errorfield = document.getElementById("error");
@@ -100,27 +107,43 @@
         document.getElementById("edit-questions").innerHTML = questions;
     }
 
-        const results = () => {
-            socketio.emit("results", {data: true});
-        };
+    const results = () => {
+        socketio.emit("results", {data: true});
+    };
 
-        const RemoveUser = (name) => {
-            document.getElementById(name).remove();
-        };
+    const RemoveUser = (name) => {
+        document.getElementById(name).remove();
+    };
 
     const previous = () => {
+        questions = questionValue()
+        questionCount--
+        document.getElementById("currentquestion").innerHTML = JSON.parse(questions)[questionCount].text;
         socketio.emit("previous", {data: true});
     };
 
     const next = () => {
-        socketio.emit("next", {data: true});
+        questions = questionValue()
+        questionCount++
+        if(questionCount < JSON.parse(questions).length ) {
+            document.getElementById("currentquestion").innerHTML = JSON.parse(questions)[questionCount].text;
+            socketio.emit("next", {data: true});
+        } else {
+            alert("This was the last question")
+            questionCount--
+       
+        }
     };
 
+    const questionValue = () => {
+        return document.getElementById("edit-questions").value
+    }
+
     const adminCommit = () => {
-        questions = document.getElementById("edit-questions").value
-
+        questions = questionValue()
         socketio.emit("commit", {data: {questions: questions}});
-
+        document.getElementById("currentquestion").innerHTML = JSON.parse(questions)[0].text;
+        questionCount = 0;
         alert("Commit Sent");
     }
 
@@ -132,6 +155,7 @@
 
     ///////////////////////////////////////////////////////////// Sockets
 
+
     socketio.on("error", (data) => {
         setError(data);
     });
@@ -141,7 +165,8 @@
     });
 
     socketio.on("updateQuestions", (data) => {
-        alert(data);
+        // alert(data);
+        console.log(data.currentquestion)
         UpdateQuestion(data.currentquestion, data.questions);
     });
 
@@ -151,7 +176,7 @@
 
     /// If it breaks Im gonna cry (Why did i do it like that no one knows).j
     socketio.on("changeScore", (data) => {
-        document.getElementById(data.name).getElementsByClassName("admin-score")[0].textContent ="Punkte: " + data.score;
+        document.getElementById(data.name).getElementsByClassName("admin-score")[0].textContent = "Punkte: " + data.score;
 
         playingUsers = Array.from(users.children);
 

@@ -9,7 +9,7 @@ Room Code : {{roomcode}}
 
     <div class="Answers">
         <div class="Answer">
-            <div>{{question.btn1}} : Anzahl</div>
+            <div>{{question.btn1}} : Anzahl </div>
             <div>{{question.btn2}} : Anzahl</div>
             <div>{{question.btn3}} : Anzahl</div>
             <div>{{question.btn4}} : Anzahl</div>
@@ -25,30 +25,31 @@ Room Code : {{roomcode}}
 </div>
 
 <script>
+    var socketio = io();
     let questionCount = [0, 0, 0, 0];
 
 
-    socketio.on("countQuestion", (data) => {
-        console.log("Klappt")
+    socketio.on("counter", (data) => {
+        console.log("Klappt");
         switch (data.count) {
-            case 1:
+            case 0:
                 console.log(1)
                 questionCount[0] = + 1;
                 break;
-            case 2:
+            case 1:
                 console.log(2)
                 questionCount[1] = + 1;
                 break;
-            case 3:
+            case 2:
                 console.log(3)
                 questionCount[2] = + 1;
                 break;
-            case 4:
+            case 3:
                 console.log(4)
                 questionCount[3] = + 1;
                 break;
         }
-    })
+    });
 
 </script>
 {% endblock %}
