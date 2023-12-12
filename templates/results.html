@@ -8,8 +8,11 @@
         Room Code : {{roomcode}}
     </div>
 
+    <div class="timer">
+        <h1 id="timer">0</h1>
+    </div>
+
     <div class="not-Results">
-        <button style="height: 10px; font-size: 10px; position: absolute;" @click="startAnim">test</button>
         <div id="question-results" class="question-results">
             {{question.text}}
         </div>
@@ -17,16 +20,18 @@
         <div class="result-inputs">
 
 
-            <div class="counters row justify-content-center" style="margin-bottom: 190px;">
-                <div id="Counter1" class="counter countB1   badge bg-success text-wrap" style="width: 6rem">0</div>
-                <div id="Counter2" class="counter countB2   badge bg-danger text-wrap" style="width: 6rem">0</div>
-                <div id="Counter3" class="counter countB3   badge bg-warning text-wrap" style="width: 6rem">0</div>
-                <div id="Counter4" class="counter countB4   badge bg-info text-wrap" style="width: 6rem">0</div>
+
+            <div class="counters row justify-content-center" style="margin-bottom: 100px;">
+                <button type="button" id="Counter1" class="counter countB1 btn btn-success "
+                    style="width: 6rem;font-size: 3rem;">0</button>
+                <button type="button" id="Counter2" class="counter countB2 btn btn-danger "
+                    style="width: 6rem;font-size: 3rem;">0</button>
+                <button type="button" id="Counter3" class="counter countB3 btn btn-warning "
+                    style="width: 6rem;font-size: 3rem;">0</button>
+                <button type="button" id="Counter4" class="counter countB4 btn btn-info "
+                    style="width: 6rem;font-size: 3rem;">0</button>
 
             </div>
-
-
-
 
             <div class="row justify-content-center">
                 <button class="col-4 quiz-button btn btn-success result-button" id="Button1"
@@ -45,16 +50,6 @@
 
             </div>
         </div>
-        <!-- <div class="Answers">
-            <div class="Answer">
-            <div>{{question.btn1}} : Anzahl </div>
-            <div>{{question.btn2}} : Anzahl</div>
-            <div>{{question.btn3}} : Anzahl</div>
-            <div>{{question.btn4}} : Anzahl</div>
-        </div>
-    </div>
-</div> -->
-
         <!-- 
         <div class="users" id="users">
             {% for user in users %}
@@ -85,6 +80,51 @@
 
     var socketio = io();
     let questionCount = [0, 0, 0, 0];
+    let countdown = void 0;
+    clearInterval(countdown);
+
+    const timeHandler = (timer, answer, state) => {
+        timer = timer +10
+        timerobj = document.getElementById("timer")
+        console.log(timerobj)
+
+        clearInterval(countdown);
+
+        timerobj.innerHTML = timer;
+
+        countdown = window.setInterval(
+            () => {
+                timer--;
+
+                timerobj.innerHTML = timer;
+
+                if (timer <= 0) {
+                    clearInterval(countdown)
+                    showSolution(answer+1, state);
+                };
+            },
+            1000
+        );
+    }
+
+    const showSolution = (answer, state) => {
+        const solutionButtons = document.getElementsByClassName("result-button")
+        const solutionCounters = document.getElementsByClassName("counter")
+        console.log(solutionButtons);
+        console.log(solutionCounters);
+
+        for (const solutionButton of solutionButtons) {
+            solutionButton.disabled = state;
+            
+        }
+        for (const solutionCounter of solutionCounters) {
+            solutionCounter.disabled = state;
+        }
+        if (state) {
+            document.getElementById(`Button${answer}`).removeAttribute("disabled");
+            document.getElementById(`Counter${answer}`).removeAttribute("disabled");
+        }
+    }
 
     const DisplayUser = (name, score) => {
         const content = `
@@ -109,12 +149,19 @@
         document.getElementById("Button4").innerHTML = data.questions.btn4;
     }
 
-const cleanCounter = () => {
-    document.getElementById("Counter1").innerHTML = 0
-    document.getElementById("Counter2").innerHTML = 0
-    document.getElementById("Counter3").innerHTML = 0
-    document.getElementById("Counter4").innerHTML = 0
-}
+
+    const cleanCounter = () => {
+        showSolution(0, false);
+        const solutionCounters = document.getElementsByClassName("counter")
+
+        console.log(solutionCounters);
+
+        for (const solutionCounter of solutionCounters) {
+            solutionCounter.innerHTML = 0;
+        }
+    }
+
+
     const updateUser = (data) => {
         console.log(data)
         // DisplayUser(data.name, data.score);
@@ -134,6 +181,11 @@ const cleanCounter = () => {
 
         questionCount = [0, 0, 0, 0];
         cleanCounter()
+
+        timeHandler(data.questions.time, data.questions.correct, true);
+
+
+
         update(data)
     })
 
@@ -157,7 +209,6 @@ const cleanCounter = () => {
             case 3:
                 questionCount[3]++;
                 document.getElementById("Counter4").innerHTML = questionCount[4]
-
                 break;
         }
     });

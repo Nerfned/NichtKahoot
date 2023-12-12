@@ -20,7 +20,9 @@
 .title {
     font-size: xx-large;
 }
-
+.counters {
+    margin-bottom: 30px;
+}
 .buttons {
     display: flex;
     flex-direction: column;
@@ -200,7 +202,7 @@ h2 {
 
 .result-inputs {
 
-    margin-top: 110px;
+    margin-top: 25px;;
     min-width: 131vw;
     margin-left: 10px;
     margin-right: 10px;
