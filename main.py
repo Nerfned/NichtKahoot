@@ -66,15 +66,16 @@ def updateQuestions(adminroom):
     room = getRoomFromAdminRoom(adminroom)
     questionobj = getCurrentQuestions(room)
     dashboardcode = getDashboardCodeFromRoomCode(room)
-# dashboardcode = request.args.get("dashboard")
     currIndex = getCurrIndexByRoom(room)
     questionobj[currIndex]["currentquestion"] = currIndex
-    content = questionobj[currIndex]
-
+    content = questionobj[currIndex]    
     socketio.emit("updateQuestions", content, to=room)
-    socketio.emit("updateQuestions", {"content": content, "toggle": True}, to=dashboardcode)
+    # socketio.emit("updateQuestions", {"content": content, "toggle": True}, to=request.args.get("dashboard"))
     
-    
+
+
+       
+
     # !!!!! THIS IS BROKEN, PLS FIX !!!!!
     # Workaround is HERE to help it works now J.W
     # socketio.emit("updateQuestions", content, to=adminroom)
@@ -132,6 +133,7 @@ def getAndSortUserByScore(room, limit):
 
 @app.route("/admin")
 def admin():
+   
     adminroom = session.get("adminroom")
 
     if adminroom is None or adminroom not in adminrooms:
@@ -139,7 +141,7 @@ def admin():
     
     room = adminrooms[adminroom]
     dashboardcode = getDashboardCodeFromRoomCode(room)
-    print(f"{dashboardcode}")
+
     return render_template("admin.html", admincode=adminroom, usercode=room, dashboardcode=dashboardcode, questions=getCurrentQuestions(room), currentquestion=getCurrIndexByRoom(room), users=getAndSortUserByScore(room, -1))
 
 @app.route("/quiz", methods=["POST", "GET"])
@@ -283,7 +285,10 @@ def results(data):
 
 ################### User Actions
 
-
+@socketio.on("result-questions")
+def resultquestions(data):
+    dashboardcode = request.args.get("dashboard")
+    socketio.emit("questionsresult", {"questions": data}, to=dashboardcode) 
 
 @socketio.on("answer")
 def answer(data):

@@ -31,7 +31,7 @@
         </div>
     </div>
 
-    <div class="edit-questions">
+    <div class="edit-questions" style="text-align: center;">
         <div class="form-outline" data-mdb-input-init>
             <textarea class="form-control" name="questions" id="edit-questions" rows="2">{{questions}}</textarea>
             <label class="form-label" for="edit-questions">Fragen bearbeiten</label>
@@ -120,6 +120,7 @@
         questionCount--
         document.getElementById("currentquestion").innerHTML = JSON.parse(questions)[questionCount].text;
         socketio.emit("previous", {data: true});
+        socketio.emit("result-questions", JsonQuestion()) 
     };
 
     const next = () => {
@@ -128,6 +129,7 @@
         if(questionCount < JSON.parse(questions).length ) {
             document.getElementById("currentquestion").innerHTML = JSON.parse(questions)[questionCount].text;
             socketio.emit("next", {data: true});
+            socketio.emit("result-questions", JsonQuestion()) 
         } else {
             alert("This was the last question")
             questionCount--
@@ -135,7 +137,18 @@
         }
     };
 
+    
+
+    // socketio.emit("result-questions", JsonQuestion()) 
+
+    const JsonQuestion = () => {
+       questions = questionValue()
+       return JSON.parse(questions)[questionCount]
+    }
+
+
     const questionValue = () => {
+       
         return document.getElementById("edit-questions").value
     }
 
