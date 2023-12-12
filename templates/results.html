@@ -20,6 +20,7 @@
         <div class="result-inputs">
 
 
+
             <div class="counters row justify-content-center" style="margin-bottom: 100px;">
                 <button type="button" id="Counter1" class="counter countB1 btn btn-success "
                     style="width: 6rem;font-size: 3rem;">0</button>
@@ -29,6 +30,7 @@
                     style="width: 6rem;font-size: 3rem;">0</button>
                 <button type="button" id="Counter4" class="counter countB4 btn btn-info "
                     style="width: 6rem;font-size: 3rem;">0</button>
+
             </div>
 
             <div class="row justify-content-center">
@@ -147,6 +149,7 @@
         document.getElementById("Button4").innerHTML = data.questions.btn4;
     }
 
+
     const cleanCounter = () => {
         showSolution(0, false);
         const solutionCounters = document.getElementsByClassName("counter")
@@ -158,13 +161,14 @@
         }
     }
 
+
     const updateUser = (data) => {
         console.log(data)
         // DisplayUser(data.name, data.score);
     }
 
     socketio.on("updateQuestions", (data) => {
-   
+
 
         update(data)
     })
@@ -179,6 +183,7 @@
         cleanCounter()
 
         timeHandler(data.questions.time, data.questions.correct, true);
+
 
 
         update(data)
