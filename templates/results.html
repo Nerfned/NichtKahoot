@@ -3,6 +3,7 @@
 {% block content %}
 <div class="results">
 
+
     <div class="code-results">
         Room Code : {{roomcode}}
     </div>
@@ -40,6 +41,7 @@
                     name="Button3">{{question.btn3}}</button>
                 <button class="col-4 quiz-button btn btn-info result-button" id="Button4"
                     name="Button4">{{question.btn4}}</button>
+
             </div>
         </div>
         <!-- <div class="Answers">
@@ -51,6 +53,7 @@
         </div>
     </div>
 </div> -->
+
         <!-- 
         <div class="users" id="users">
             {% for user in users %}
@@ -66,6 +69,7 @@
             </div>
             {% endfor %}
         </div> -->
+
 
         <!-- <div class="Leaderboard">
     Aktuelles Leaderboard:
@@ -118,8 +122,6 @@
 
     socketio.on("leaderboard", (data) => {
         console.log(data)
-
-
     })
 
     socketio.on("questionsresult", (data) => {
@@ -127,10 +129,12 @@
         update(data)
     })
 
+
     socketio.on("counter", (data) => {
         console.log("Klappt");
         switch (data.count) {
             case 0:
+
                 questionCount[0]++;
                 document.getElementById("Counter1").innerHTML = questionCount[0]
                 break;
@@ -145,6 +149,7 @@
             case 3:
                 questionCount[3]++;
                 document.getElementById("Counter4").innerHTML = questionCount[4]
+
                 break;
         }
     });
