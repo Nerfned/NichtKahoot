@@ -1,54 +1,135 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="results">
 
-Room Code : {{roomcode}}
+    <div class="code-results">
+        Room Code : {{roomcode}}
+    </div>
 
-<div class="not-Results">
-    {{question.text}}
+    <div class="not-Results">
+        <div id="question-results" class="question-results">
+            {{question.text}}
+        </div>
 
-    <div class="Answers">
-        <div class="Answer">
-            <div>{{question.btn1}} : Anzahl</div>
+        <div class="quiz-inputs">
+            <div class="grid">
+
+                <button class="g-col-6 quiz-button btn btn-success result-button" id="Button1" name="Button1"
+                    disabled>{{question.btn1}}</button>
+                <button class="g-col-6 quiz-button btn btn-danger result-button" id="Button2" name="Button2"
+                    disabled>{{question.btn2}}</button>
+
+
+                <button class="g-col-6 quiz-button btn btn-warning result-button" id="Button3" name="Button3"
+                    disabled>{{question.btn3}}</button>
+                <button class="g-col-6 quiz-button btn btn-info result-button" id="Button4" name="Button4"
+                    disabled>{{question.btn4}}</button>
+            </div>
+        </div>
+        <!-- <div class="Answers">
+            <div class="Answer">
+            <div>{{question.btn1}} : Anzahl </div>
             <div>{{question.btn2}} : Anzahl</div>
             <div>{{question.btn3}} : Anzahl</div>
             <div>{{question.btn4}} : Anzahl</div>
         </div>
     </div>
-</div>
+</div> -->
 
-<div class="Leaderboard">
+        <div class="users" id="users">
+            {% for user in users %}
+            <div class="user" id="{{user.name}}">
+                <div class="d-flex p-2  justify-content-between">
+                    <strong class="admin-user">{{user.name}}</strong>
+                    <div class="justify-content-between">
+                        <button class="kick-button btn btn-danger" name="kick" onClick="kickUser(user.name)"
+                            value="{{user.name}}">Kick</button>
+                        <div class="admin-score">Punkte: {{user.score}}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- <div class="Leaderboard">
     Aktuelles Leaderboard:
     {% for user in users %}
     <div class="person">{{user.name}} : {{user.score}}</div>
     {% endfor %}
-</div>
+</div> -->
 
+    </div>
+</div>
 <script>
+
+    var socketio = io();
     let questionCount = [0, 0, 0, 0];
 
+    const DisplayUser = (name, score) => {
+        const content = `
+            <div class="user" id="${name}" nodeValue="${score}">
+                <div class="d-flex p-2  justify-content-between">
+                    <strong class="admin-user">${name}</strong>
+                  <div class="d-flex p-2  justify-content-between admin-function">
+                        <button class="kick-button btn btn-danger" name="kick" onClick="kickUser(${name})" value="${name}">Kick</button>
+                        <div class="admin-score">Punkte: ${score}</div>
+                    <div> 
+                </div>
+            </div>
+        `;
+        users.innerHTML += content;
+    };
 
-    socketio.on("countQuestion", (data) => {
-        console.log("Klappt")
+    const update = (data) => {
+        document.getElementById("question-results").innerHTML = data.questions.text;
+        document.getElementById("Button1").innerHTML = data.questions.btn1;
+        document.getElementById("Button2").innerHTML = data.questions.btn2;
+        document.getElementById("Button3").innerHTML = data.questions.btn3;
+        document.getElementById("Button4").innerHTML = data.questions.btn4;
+    }
+
+
+    const updateUser = (data) => {
+        console.log(data)
+        // DisplayUser(data.name, data.score);
+    }
+
+    socketio.on("updateQuestions", (data) => {
+        console.log("AHHH")
+        
+        update(data)
+    })
+
+    socketio.on("leaderboard", (data) => {
+        console.log(data)
+
+        
+    })
+    socketio.on("questionsresult", (data) => {
+        console.log(data)
+        questionCount = [0, 0, 0, 0];
+        update(data)
+    })
+    socketio.on("counter", (data) => {
+        console.log("Klappt");
         switch (data.count) {
+            case 0:
+                questionCount[0]++ ;
+                break;
             case 1:
-                console.log(1)
-                questionCount[0] = + 1;
+                questionCount[1]++;
                 break;
             case 2:
-                console.log(2)
-                questionCount[1] = + 1;
+                questionCount[2]++;
                 break;
             case 3:
-                console.log(3)
-                questionCount[2] = + 1;
-                break;
-            case 4:
-                console.log(4)
-                questionCount[3] = + 1;
+                questionCount[3]++;
+                document.getElementById("Button4").innerHTML =questionCount[3]
                 break;
         }
-    })
+    });
+
 
 </script>
 {% endblock %}

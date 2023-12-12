@@ -158,3 +158,16 @@ h2 {
     align-items: center;
     justify-content: center;
 }
+.control {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+#currentquestion {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}

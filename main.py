@@ -59,22 +59,30 @@ def changeCurrentQuestion(data, skipquestion):
             print("Room " + room + " chaneged to question " + str(moreCurrIndex))
             updateQuestions(adminroom)
 
+
 # Sends updated questions to all admin and user rooms
 def updateQuestions(adminroom):
+    
     room = getRoomFromAdminRoom(adminroom)
     questionobj = getCurrentQuestions(room)
     dashboardcode = getDashboardCodeFromRoomCode(room)
-
     currIndex = getCurrIndexByRoom(room)
     questionobj[currIndex]["currentquestion"] = currIndex
-    content = questionobj[currIndex]
-
+    content = questionobj[currIndex]    
     socketio.emit("updateQuestions", content, to=room)
-    socketio.emit("updateQuestions", {"content": content, "toggle": True}, to=dashboardcode)
-    #socketio.emit("updateQuestions", {"testing" : "testing"}, to=adminroom) !!!!! THIS IS BROKEN, PLS FIX !!!!!
+    # socketio.emit("updateQuestions", {"content": content, "toggle": True}, to=request.args.get("dashboard"))
+    
+
+
+       
+
+    # !!!!! THIS IS BROKEN, PLS FIX !!!!!
+    # Workaround is HERE to help it works now J.W
+    # socketio.emit("updateQuestions", content, to=adminroom)
 
 def jsonLoadsQuestions(room):
     return json.loads("\"" + str(getCurrentQuestions(room)) + "\"")
+
 
 def getDashboardCodeFromRoomCode(room):
     keys = [i for i in dashboard.keys()]
@@ -106,24 +114,26 @@ def getRoomFromAdminRoom(adminroom):
     return adminrooms[adminroom]
 
 def getAndSortUserByScore(room, limit):
-    users = rooms[room]["members"]
+#    just dont ask what ist happining there it just works: J.W
+   temp = rooms[room]["members"]
+   rooms[room]["members"] = dict(sorted(temp.items(), key=lambda item: item[1]["score"], reverse=True) )
+   
+   users = rooms[room]["members"]
+   tempusers = []
+   for name, score in users.items(): 
+       tempusers.append({"name": name, "score": score["score"] })
 
-    # do some sick sortin' right here
-    
-    tempusers = []
-    for name, score in users.items(): 
-        tempusers.append({"name": name, "score": score["score"] })
+   if limit > 0:
+       tempusers = tempusers[:limit]
 
-    if limit > 0:
-        tempusers = tempusers[:limit]
-
-    return tempusers
+   return tempusers
 
 
 #################### Routs
 
 @app.route("/admin")
 def admin():
+   
     adminroom = session.get("adminroom")
 
     if adminroom is None or adminroom not in adminrooms:
@@ -218,6 +228,7 @@ def home():
 @app.route("/results")
 def results():
     dashboardcode = request.args.get("dashboard")
+    
 
     if dashboardcode is None or dashboardcode not in dashboard:
         return redirect(url_for("home"))
@@ -226,7 +237,7 @@ def results():
     session["room"] = room
 
     tempusers = getAndSortUserByScore(room, 4)
-
+    
     return render_template("results.html", roomcode=room, question=getCurrentQuestion(room), users=tempusers)
 
 
@@ -274,13 +285,19 @@ def results(data):
 
 ################### User Actions
 
+@socketio.on("result-questions")
+def resultquestions(data):
+    dashboardcode = request.args.get("dashboard")
+    socketio.emit("questionsresult", {"questions": data}, to=dashboardcode) 
+
 @socketio.on("answer")
 def answer(data):
     room = session.get("room")
     name = session.get("name")
     adminroom = session.get("adminroom")
+    dashboardcode = request.args.get("dashboard")
+   
 
-    
     question = getCurrentQuestion(room)
 
 
@@ -291,10 +308,13 @@ def answer(data):
         leave_room(room)
         return
     
-    if data["buttonPressed"]:
 
-        count =  data["buttonPressed"]  
-        socketio.emit("countQuestion",{"count": count}, to=dashboardcode)
+
+    count = data["buttonPressed"]  
+ 
+    socketio.emit("counter", {"count": count}, to=dashboardcode)
+   
+
 
     if data["buttonPressed"] == question["correct"]:
 
@@ -308,7 +328,7 @@ def answer(data):
         
         socketio.emit("changeScore", {"name": name, "score": rooms[room]["members"][name]["score"]}, to=adminroom)   
 
-
+    
 ################### Other Handlers
 
 @socketio.on("connect")
@@ -347,8 +367,8 @@ def disconnect():
     if adminroom is None:
         leave_room(room)
         if room in rooms:
-            del rooms[room]["members"][name]
             socketio.emit("userLeve", {"name": name}, to=adminroom)
+            del rooms[room]["members"][name]
     elif dashboardcode is None:
         leave_room(dashboardcode)
     else:
