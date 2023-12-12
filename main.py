@@ -66,7 +66,7 @@ def updateQuestions(adminroom):
     room = getRoomFromAdminRoom(adminroom)
     questionobj = getCurrentQuestions(room)
     dashboardcode = getDashboardCodeFromRoomCode(room)
-
+# dashboardcode = request.args.get("dashboard")
     currIndex = getCurrIndexByRoom(room)
     questionobj[currIndex]["currentquestion"] = currIndex
     content = questionobj[currIndex]
@@ -139,7 +139,7 @@ def admin():
     
     room = adminrooms[adminroom]
     dashboardcode = getDashboardCodeFromRoomCode(room)
-
+    print(f"{dashboardcode}")
     return render_template("admin.html", admincode=adminroom, usercode=room, dashboardcode=dashboardcode, questions=getCurrentQuestions(room), currentquestion=getCurrIndexByRoom(room), users=getAndSortUserByScore(room, -1))
 
 @app.route("/quiz", methods=["POST", "GET"])
@@ -226,6 +226,7 @@ def home():
 @app.route("/results")
 def results():
     dashboardcode = request.args.get("dashboard")
+    
 
     if dashboardcode is None or dashboardcode not in dashboard:
         return redirect(url_for("home"))
@@ -234,7 +235,7 @@ def results():
     session["room"] = room
 
     tempusers = getAndSortUserByScore(room, 4)
-
+    
     return render_template("results.html", roomcode=room, question=getCurrentQuestion(room), users=tempusers)
 
 
@@ -289,8 +290,8 @@ def answer(data):
     room = session.get("room")
     name = session.get("name")
     adminroom = session.get("adminroom")
-    dashboardcode = getDashboardCodeFromRoomCode(room)
-    
+    dashboardcode = request.args.get("dashboard")
+   
     question = getCurrentQuestion(room)
 
 
@@ -305,7 +306,7 @@ def answer(data):
     count = data["buttonPressed"]  
  
     socketio.emit("counter", {"count": count}, to=dashboardcode)
-    print(f"{count} test {dashboardcode}")
+   
 
 
     if data["buttonPressed"] == question["correct"]:

@@ -1,13 +1,26 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-Room Code : {{roomcode}}
+<div class="code-results">
+    Room Code : {{roomcode}}
+</div>
 
 <div class="not-Results">
-    {{question.text}}
+    <div class="question-results">
+        {{question.text}}
+    </div>
 
-    <div class="Answers">
+    <div class="quiz-inputs">
+        <div class="row">
+            <button class="quiz-button btn btn-success" id="Button1" name="Button1" disabled>{{question.btn1}}</button>
+            <button class="quiz-button btn btn-danger" id="Button2" name="Button2" disabled>{{question.btn2}}</button>
+        </div>
+        <div class="row">
+            <button class="quiz-button btn btn-warning" id="Button3" name="Button3" disabled>{{question.btn3}}</button>
+            <button class="quiz-button btn btn-info" id="Button4" name="Button4" disabled>{{question.btn4}}</button>
+        </div>
+    </div>
+    <!-- <div class="Answers">
         <div class="Answer">
             <div>{{question.btn1}} : Anzahl </div>
             <div>{{question.btn2}} : Anzahl</div>
@@ -15,18 +28,24 @@ Room Code : {{roomcode}}
             <div>{{question.btn4}} : Anzahl</div>
         </div>
     </div>
-</div>
+</div> -->
 
-<div class="Leaderboard">
+<!-- <div class="Leaderboard">
     Aktuelles Leaderboard:
     {% for user in users %}
     <div class="person">{{user.name}} : {{user.score}}</div>
     {% endfor %}
-</div>
+</div> -->
 
 <script>
     var socketio = io();
     let questionCount = [0, 0, 0, 0];
+
+
+
+    socketio.on("updateQuestions", (data) => {
+        questionCount = [0, 0, 0, 0];
+    })
 
 
     socketio.on("counter", (data) => {
