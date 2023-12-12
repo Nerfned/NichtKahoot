@@ -23,7 +23,9 @@
         <p>
             Current question: <br>
         <div id="currentquestion"></div>
+
         </p>
+
         <div class='control'>
             <button class="btn btn-primary" id="button-prev" name="previous" onclick="previous()">&laquo;</button>
             <button class="btn btn-primary" id="results" name="results" onclick="results()">Ergebnis</button>
@@ -64,6 +66,7 @@
     const users = document.getElementById("users")
     let ranking;
     let questionCount = 0;
+
     let currentquestion;
 
     const DisplayUser = (name, score) => {
@@ -118,6 +121,7 @@
     };
 
     const previous = () => {
+
         if (questionCount > 0) {
             questionCount--
             document.getElementById("currentquestion").innerHTML = JSON.parse(currentquestion)[questionCount].text;
@@ -152,12 +156,15 @@
     const questionValue = () => {
         currentquestion = document.getElementById("edit-questions").value
         return currentquestion
+
     }
 
     const adminCommit = () => {
         questions = questionValue()
         socketio.emit("commit", {data: {questions: questions}});
+
         document.getElementById("currentquestion").innerHTML = JSON.parse(currentquestion)[0].text;
+
         questionCount = 0;
         alert("Commit Sent");
     }
