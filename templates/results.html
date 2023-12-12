@@ -22,6 +22,7 @@
                 <div id="Counter2" class="counter countB2   badge bg-danger text-wrap" style="width: 6rem">0</div>
                 <div id="Counter3" class="counter countB3   badge bg-warning text-wrap" style="width: 6rem">0</div>
                 <div id="Counter4" class="counter countB4   badge bg-info text-wrap" style="width: 6rem">0</div>
+
             </div>
 
 
@@ -120,7 +121,7 @@ const cleanCounter = () => {
     }
 
     socketio.on("updateQuestions", (data) => {
-        console.log("updatequestions" + data)
+
 
         update(data)
     })
@@ -130,7 +131,7 @@ const cleanCounter = () => {
     })
 
     socketio.on("questionsresult", (data) => {
-        console.log("questionsresult", data)
+
         questionCount = [0, 0, 0, 0];
         cleanCounter()
         update(data)
