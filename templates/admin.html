@@ -126,6 +126,7 @@
             questionCount--
             document.getElementById("currentquestion").innerHTML = JSON.parse(currentquestion)[questionCount].text;
             socketio.emit("previous", {data: true});
+
             socketio.emit("result-questions", JsonQuestion())
         } else {alert("No Questions")}
     };
@@ -146,7 +147,12 @@
 
 
     const JsonQuestion = () => {
+
+        questions = currentquestion
+        return JSON.parse(questions)[questionCount]
+
         return JSON.parse(currentquestion)[questionCount]
+
     }
 
 
