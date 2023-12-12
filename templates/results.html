@@ -16,11 +16,11 @@
         <div class="result-inputs">
 
 
-            <div class="counters row justify-content-center">
-                <div name="Counter1" class="counter countB1   badge bg-success text-wrap" style="width: 6rem">0</div>
-                <div name="Counter2" class="counter countB2   badge bg-danger text-wrap" style="width: 6rem">0</div>
-                <div name="Counter3" class="counter countB3   badge bg-warning text-wrap" style="width: 6rem">0</div>
-                <div name="Counter4" class="counter countB4   badge bg-info text-wrap" style="width: 6rem">0</div>
+            <div class="counters row justify-content-center" style="margin-bottom: 190px;">
+                <div id="Counter1" class="counter countB1   badge bg-success text-wrap" style="width: 6rem">0</div>
+                <div id="Counter2" class="counter countB2   badge bg-danger text-wrap" style="width: 6rem">0</div>
+                <div id="Counter3" class="counter countB3   badge bg-warning text-wrap" style="width: 6rem">0</div>
+                <div id="Counter4" class="counter countB4   badge bg-info text-wrap" style="width: 6rem">0</div>
             </div>
 
 
@@ -104,26 +104,31 @@
         document.getElementById("Button4").innerHTML = data.questions.btn4;
     }
 
-
+const cleanCounter = () => {
+    document.getElementById("Counter1").innerHTML = 0
+    document.getElementById("Counter2").innerHTML = 0
+    document.getElementById("Counter3").innerHTML = 0
+    document.getElementById("Counter4").innerHTML = 0
+}
     const updateUser = (data) => {
         console.log(data)
         // DisplayUser(data.name, data.score);
     }
 
     socketio.on("updateQuestions", (data) => {
-        console.log("AHHH")
+        console.log("updatequestions" + data)
 
         update(data)
     })
 
     socketio.on("leaderboard", (data) => {
         console.log(data)
-
-
     })
 
     socketio.on("questionsresult", (data) => {
+        console.log("questionsresult", data)
         questionCount = [0, 0, 0, 0];
+        cleanCounter()
         update(data)
     })
 
