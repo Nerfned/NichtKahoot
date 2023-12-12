@@ -8,23 +8,38 @@
     </div>
 
     <div class="not-Results">
+        <button style="height: 10px; font-size: 10px; position: absolute;" @click="startAnim">test</button>
         <div id="question-results" class="question-results">
             {{question.text}}
         </div>
 
-        <div class="quiz-inputs">
-            <div class="grid">
-
-                <button class="g-col-6 quiz-button btn btn-success result-button" id="Button1" name="Button1"
-                    disabled>{{question.btn1}}</button>
-                <button class="g-col-6 quiz-button btn btn-danger result-button" id="Button2" name="Button2"
-                    disabled>{{question.btn2}}</button>
+        <div class="result-inputs">
 
 
-                <button class="g-col-6 quiz-button btn btn-warning result-button" id="Button3" name="Button3"
-                    disabled>{{question.btn3}}</button>
-                <button class="g-col-6 quiz-button btn btn-info result-button" id="Button4" name="Button4"
-                    disabled>{{question.btn4}}</button>
+            <div class="counters row justify-content-center">
+                <div name="Counter1" class="counter countB1   badge bg-success text-wrap" style="width: 6rem">0</div>
+                <div name="Counter2" class="counter countB2   badge bg-danger text-wrap" style="width: 6rem">0</div>
+                <div name="Counter3" class="counter countB3   badge bg-warning text-wrap" style="width: 6rem">0</div>
+                <div name="Counter4" class="counter countB4   badge bg-info text-wrap" style="width: 6rem">0</div>
+            </div>
+
+
+
+
+            <div class="row justify-content-center">
+                <button class="col-4 quiz-button btn btn-success result-button" id="Button1"
+                    name="Button1">{{question.btn1}}</button>
+
+                <button class="col-4 quiz-button btn btn-danger result-button" id="Button2"
+                    name="Button2">{{question.btn2}}</button>
+            </div>
+
+
+            <div class="row justify-content-center">
+                <button class="col-4 quiz-button btn btn-warning result-button" id="Button3"
+                    name="Button3">{{question.btn3}}</button>
+                <button class="col-4 quiz-button btn btn-info result-button" id="Button4"
+                    name="Button4">{{question.btn4}}</button>
             </div>
         </div>
         <!-- <div class="Answers">
@@ -36,7 +51,7 @@
         </div>
     </div>
 </div> -->
-
+        <!-- 
         <div class="users" id="users">
             {% for user in users %}
             <div class="user" id="{{user.name}}">
@@ -50,7 +65,7 @@
                 </div>
             </div>
             {% endfor %}
-        </div>
+        </div> -->
 
         <!-- <div class="Leaderboard">
     Aktuelles Leaderboard:
@@ -96,38 +111,53 @@
 
     socketio.on("updateQuestions", (data) => {
         console.log("AHHH")
-        
+
         update(data)
     })
 
     socketio.on("leaderboard", (data) => {
         console.log(data)
 
-        
+
     })
+
     socketio.on("questionsresult", (data) => {
-        console.log(data)
         questionCount = [0, 0, 0, 0];
         update(data)
     })
+
     socketio.on("counter", (data) => {
         console.log("Klappt");
         switch (data.count) {
             case 0:
-                questionCount[0]++ ;
+                questionCount[0]++;
+                document.getElementById("Counter1").innerHTML = questionCount[0]
                 break;
             case 1:
                 questionCount[1]++;
+                document.getElementById("Counter2").innerHTML = questionCount[1]
                 break;
             case 2:
                 questionCount[2]++;
+                document.getElementById("Counter3").innerHTML = questionCount[2]
                 break;
             case 3:
                 questionCount[3]++;
-                document.getElementById("Button4").innerHTML =questionCount[3]
+                document.getElementById("Counter4").innerHTML = questionCount[4]
                 break;
         }
     });
 
 </script>
+
+<style>
+    .card {
+        width: max-content;
+        left: 50%;
+        transform: translate(-50%);
+        width: 94vw;
+        height: 80vh;
+        margin-top: 50px;
+    }
+</style>
 {% endblock %}

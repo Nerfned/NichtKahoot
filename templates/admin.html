@@ -23,7 +23,7 @@
         <p>
             Current question: <br>
         <div id="currentquestion"></div>
-        </p>     
+        </p>
         <div class='control'>
             <button class="btn btn-primary" id="button-prev" name="previous" onclick="previous()">&laquo;</button>
             <button class="btn btn-primary" id="results" name="results" onclick="results()">Ergebnis</button>
@@ -64,6 +64,8 @@
     const users = document.getElementById("users")
     let ranking;
     let questionCount = 0;
+    let currentquestion;
+
     const DisplayUser = (name, score) => {
         const content = `
             <div class="user" id="${name}" nodeValue="${score}">
@@ -116,46 +118,43 @@
     };
 
     const previous = () => {
-        questions = questionValue()
-        questionCount--
-        document.getElementById("currentquestion").innerHTML = JSON.parse(questions)[questionCount].text;
-        socketio.emit("previous", {data: true});
-        socketio.emit("result-questions", JsonQuestion()) 
+        if (questionCount > 0) {
+            questionCount--
+            document.getElementById("currentquestion").innerHTML = JSON.parse(currentquestion)[questionCount].text;
+            socketio.emit("previous", {data: true});
+            socketio.emit("result-questions", JsonQuestion())
+        } else {alert("No Questions")}
     };
 
     const next = () => {
-        questions = questionValue()
         questionCount++
-        if(questionCount < JSON.parse(questions).length ) {
-            document.getElementById("currentquestion").innerHTML = JSON.parse(questions)[questionCount].text;
+        if (questionCount < JSON.parse(currentquestion).length) {
+            document.getElementById("currentquestion").innerHTML = JSON.parse(currentquestion)[questionCount].text;
             socketio.emit("next", {data: true});
-            socketio.emit("result-questions", JsonQuestion()) 
+            socketio.emit("result-questions", JsonQuestion())
         } else {
             alert("This was the last question")
             questionCount--
-       
+
         }
     };
 
-    
 
-    // socketio.emit("result-questions", JsonQuestion()) 
 
     const JsonQuestion = () => {
-       questions = questionValue()
-       return JSON.parse(questions)[questionCount]
+        return JSON.parse(currentquestion)[questionCount]
     }
 
 
     const questionValue = () => {
-       
-        return document.getElementById("edit-questions").value
+        currentquestion = document.getElementById("edit-questions").value
+        return currentquestion
     }
 
     const adminCommit = () => {
         questions = questionValue()
         socketio.emit("commit", {data: {questions: questions}});
-        document.getElementById("currentquestion").innerHTML = JSON.parse(questions)[0].text;
+        document.getElementById("currentquestion").innerHTML = JSON.parse(currentquestion)[0].text;
         questionCount = 0;
         alert("Commit Sent");
     }
@@ -163,7 +162,7 @@
     /// STUPID SHIT I STARTED ps .j
     const kickUser = (user) => {
         socketio.emit("userKick", {data: user.id});
-        document.getElementById(user.id).remove();
+        RemoveUser(data.name);
     };
 
     ///////////////////////////////////////////////////////////// Sockets
