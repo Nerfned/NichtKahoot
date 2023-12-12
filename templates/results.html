@@ -2,8 +2,6 @@
 
 {% block content %}
 <div class="results">
-
-
     <div class="code-results">
         Room Code : {{roomcode}}
     </div>
@@ -13,71 +11,31 @@
     </div>
 
     <div class="not-Results">
-        <div id="question-results" class="question-results">
-            {{question.text}}
-        </div>
+        <div id="question-results" class="question-results">{{question.text}}</div>
 
         <div class="result-inputs">
-
-
-
             <div class="counters row justify-content-center" style="margin-bottom: 100px;">
-                <button type="button" id="Counter1" class="counter countB1 btn btn-success "
-                    style="width: 6rem;font-size: 3rem;">0</button>
-                <button type="button" id="Counter2" class="counter countB2 btn btn-danger "
-                    style="width: 6rem;font-size: 3rem;">0</button>
-                <button type="button" id="Counter3" class="counter countB3 btn btn-warning "
-                    style="width: 6rem;font-size: 3rem;">0</button>
-                <button type="button" id="Counter4" class="counter countB4 btn btn-info "
-                    style="width: 6rem;font-size: 3rem;">0</button>
-
+                <button type="button" id="Counter1" class="counter countB1 btn btn-success " style="width: 6rem;font-size: 3rem;">0</button>
+                <button type="button" id="Counter2" class="counter countB2 btn btn-danger " style="width: 6rem;font-size: 3rem;">0</button>
+                <button type="button" id="Counter3" class="counter countB3 btn btn-warning " style="width: 6rem;font-size: 3rem;">0</button>
+                <button type="button" id="Counter4" class="counter countB4 btn btn-info " style="width: 6rem;font-size: 3rem;">0</button>
             </div>
 
             <div class="row justify-content-center">
-                <button class="col-4 quiz-button btn btn-success result-button" id="Button1"
-                    name="Button1">{{question.btn1}}</button>
+                <button class="col-4 quiz-button btn btn-success result-button" id="Button1" name="Button1">{{question.btn1}}</button>
 
-                <button class="col-4 quiz-button btn btn-danger result-button" id="Button2"
-                    name="Button2">{{question.btn2}}</button>
+                <button class="col-4 quiz-button btn btn-danger result-button" id="Button2" name="Button2">{{question.btn2}}</button>
             </div>
 
-
             <div class="row justify-content-center">
-                <button class="col-4 quiz-button btn btn-warning result-button" id="Button3"
-                    name="Button3">{{question.btn3}}</button>
-                <button class="col-4 quiz-button btn btn-info result-button" id="Button4"
-                    name="Button4">{{question.btn4}}</button>
-
+                <button class="col-4 quiz-button btn btn-warning result-button" id="Button3" name="Button3">{{question.btn3}}</button>
+                <button class="col-4 quiz-button btn btn-info result-button" id="Button4" name="Button4">{{question.btn4}}</button>
             </div>
         </div>
-        <!-- 
-        <div class="users" id="users">
-            {% for user in users %}
-            <div class="user" id="{{user.name}}">
-                <div class="d-flex p-2  justify-content-between">
-                    <strong class="admin-user">{{user.name}}</strong>
-                    <div class="justify-content-between">
-                        <button class="kick-button btn btn-danger" name="kick" onClick="kickUser(user.name)"
-                            value="{{user.name}}">Kick</button>
-                        <div class="admin-score">Punkte: {{user.score}}</div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div> -->
-
-
-        <!-- <div class="Leaderboard">
-    Aktuelles Leaderboard:
-    {% for user in users %}
-    <div class="person">{{user.name}} : {{user.score}}</div>
-    {% endfor %}
-</div> -->
-
     </div>
 </div>
-<script>
 
+<script>
     var socketio = io();
     let questionCount = [0, 0, 0, 0];
     let countdown = void 0;
@@ -95,7 +53,6 @@
         countdown = window.setInterval(
             () => {
                 timer--;
-
                 timerobj.innerHTML = timer;
 
                 if (timer <= 0) {
@@ -149,7 +106,6 @@
         document.getElementById("Button4").innerHTML = data.questions.btn4;
     }
 
-
     const cleanCounter = () => {
         showSolution(0, false);
         const solutionCounters = document.getElementsByClassName("counter")
@@ -161,59 +117,27 @@
         }
     }
 
-
-    const updateUser = (data) => {
-        console.log(data)
-        // DisplayUser(data.name, data.score);
-    }
-
     socketio.on("updateQuestions", (data) => {
-
-
-        update(data)
+        update(data);
     })
 
     socketio.on("leaderboard", (data) => {
-        console.log(data)
+        console.log(data);
     })
 
     socketio.on("questionsresult", (data) => {
-
         questionCount = [0, 0, 0, 0];
-        cleanCounter()
-
+        
+        cleanCounter();
         timeHandler(data.questions.time, data.questions.correct, true);
-
-
-
-        update(data)
+        update(data);
     })
 
-
     socketio.on("counter", (data) => {
-        console.log("Klappt");
-        switch (data.count) {
-            case 0:
-
-                questionCount[0]++;
-                document.getElementById("Counter1").innerHTML = questionCount[0]
-                break;
-            case 1:
-                questionCount[1]++;
-                document.getElementById("Counter2").innerHTML = questionCount[1]
-                break;
-            case 2:
-                questionCount[2]++;
-                document.getElementById("Counter3").innerHTML = questionCount[2]
-                break;
-            case 3:
-                questionCount[3]++;
-                document.getElementById("Counter4").innerHTML = questionCount[4]
-                break;
-        }
+        var dataCount = data.count;
+        questionCount[dataCount]++;
+        document.getElementById("Counter".concat(dataCount + 1)).innerHTML = questionCount[dataCount];
     });
-
-
 </script>
 
 <style>

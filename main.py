@@ -59,16 +59,14 @@ def changeCurrentQuestion(data, skipquestion):
             print("Room " + room + " chaneged to question " + str(moreCurrIndex))
             updateQuestions(adminroom)
 
-
 # Sends updated questions to all admin and user rooms
 def updateQuestions(adminroom):
-    
     room = getRoomFromAdminRoom(adminroom)
     questionobj = getCurrentQuestions(room)
-    dashboardcode = getDashboardCodeFromRoomCode(room)
     currIndex = getCurrIndexByRoom(room)
     questionobj[currIndex]["currentquestion"] = currIndex
-    content = questionobj[currIndex]    
+    content = getCurrentQuestion(room)
+
     socketio.emit("updateQuestions", content, to=room)
     # socketio.emit("updateQuestions", {"content": content, "toggle": True}, to=request.args.get("dashboard"))
     
@@ -114,23 +112,21 @@ def getRoomFromAdminRoom(adminroom):
     return adminrooms[adminroom]
 
 def getAndSortUserByScore(room, limit):
-#    just dont ask what ist happining there it just works: J.W
-   temp = rooms[room]["members"]
-   rooms[room]["members"] = dict(sorted(temp.items(), key=lambda item: item[1]["score"], reverse=True) )
-   
-   users = rooms[room]["members"]
-   tempusers = []
-   for name, score in users.items(): 
-       tempusers.append({"name": name, "score": score["score"] })
+    # just dont ask what ist happining there it just works: J.W
+    temp = rooms[room]["members"]
+    rooms[room]["members"] = dict(sorted(temp.items(), key=lambda item: item[1]["score"], reverse=True) )
 
-   if limit > 0:
-       tempusers = tempusers[:limit]
+    users = rooms[room]["members"]
+    tempusers = []
+    for name, score in users.items(): 
+        tempusers.append({"name": name, "score": score["score"] })
 
-   return tempusers
+    if limit > 0:
+        tempusers = tempusers[:limit]
 
+    return tempusers
 
 #################### Routs
-
 @app.route("/admin")
 def admin():
    
@@ -228,7 +224,6 @@ def home():
 @app.route("/results")
 def results():
     dashboardcode = request.args.get("dashboard")
-    
 
     if dashboardcode is None or dashboardcode not in dashboard:
         return redirect(url_for("home"))
@@ -240,9 +235,7 @@ def results():
     
     return render_template("results.html", roomcode=room, question=getCurrentQuestion(room), users=tempusers)
 
-
 ################### Admin Controlls
-
 @socketio.on("previous")
 def previous(data):
     changeCurrentQuestion(data, -1)
@@ -281,10 +274,7 @@ def results(data):
 
     socketio.emit("leaderboard", {"user": getAndSortUserByScore(room, 4), "toggle": False}, to=dashboardcode)
 
-
-
 ################### User Actions
-
 @socketio.on("result-questions")
 def resultquestions(data):
     dashboardcode = request.args.get("dashboard")
@@ -296,10 +286,8 @@ def answer(data):
     name = session.get("name")
     adminroom = session.get("adminroom")
     dashboardcode = request.args.get("dashboard")
-   
 
     question = getCurrentQuestion(room)
-
 
     if room is None or name is None:
         return
@@ -307,14 +295,10 @@ def answer(data):
     if room not in rooms:
         leave_room(room)
         return
-    
-
 
     count = data["buttonPressed"]  
  
     socketio.emit("counter", {"count": count}, to=dashboardcode)
-   
-
 
     if data["buttonPressed"] == question["correct"]:
 
@@ -330,7 +314,6 @@ def answer(data):
 
     
 ################### Other Handlers
-
 @socketio.on("connect")
 def connect(auth):
     room = session.get("room")
