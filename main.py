@@ -297,6 +297,7 @@ def answer(data):
     adminroom = session.get("adminroom")
     dashboardcode = request.args.get("dashboard")
    
+
     question = getCurrentQuestion(room)
 
 
@@ -307,6 +308,7 @@ def answer(data):
         leave_room(room)
         return
     
+
 
     count = data["buttonPressed"]  
  
