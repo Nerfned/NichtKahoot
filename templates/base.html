@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en" data-mdb-theme="dark">
+
 <head>
     <title>QuizApp</title>
 
@@ -12,15 +12,21 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='mdb5-free-standard/css/mdb.dark.min.css' )}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='mdb5-free-standard/css/mdb.min.css' )}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
-  
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
-    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+        integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+        crossorigin="anonymous"></script>
+
     <style>
         /* Height for devices larger than 576px */
         @media (min-width: 992px) {
             #intro {
                 margin-top: -58.59px;
             }
+        }
+
+        .ncard {
+            box-shadow: 11px 6px 0px 0px rgba(10, 10, 10, 0.3);
         }
     </style>
 </head>
@@ -42,11 +48,11 @@
     <!-- Navbar -->
 
     <!-- Background image -->
-    <div class="mask d-flex align-items-center h-100" >
+    <div class="mask d-flex align-items-center h-100">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-xl-5 col-md-8">
-                    <div class="card">
+                    <div class="card" style="box-shadow: 11px 6px 0px 0px rgba(10, 10, 10, 0.3);">
                         <div class="card-body">
                             <div class="content">
                                 {% block content %} {% endblock %}
@@ -55,18 +61,19 @@
                     </div>
                     <script type="text/javascript"
                         src="{{ url_for('static', filename='mdb5-free-standard/js/mdb.umd.min.js' )}}">
-                    </script>
+                        </script>
                 </div>
             </div>
         </div>
     </div>
 </body>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            var storedTheme = localStorage.getItem('theme');
-            if (storedTheme) {
-                document.documentElement.setAttribute('data-mdb-theme', storedTheme);
-            }
-        });
-    </script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        var storedTheme = localStorage.getItem('theme');
+        if (storedTheme) {
+            document.documentElement.setAttribute('data-mdb-theme', storedTheme);
+        }
+    });
+</script>
+
 </html>
