@@ -257,22 +257,20 @@ def adminChange(data):
 def userKick(name):
     room = session.get("room")
     session.pop("room")
-    
+
     if room in rooms:
         del rooms[room]["members"][name]
          
 @socketio.on("results")
 def results(data):
-    print("results")
     adminroom = session.get("adminroom")
     room = getRoomFromAdminRoom(adminroom)
-
-    dashboardcode = getDashboardCodeFromRoomCode(room)
+    dashboardcode = request.args.get("dashboard")
 
     session["room"] = room
     session["dashboardcode"] = dashboardcode
-
-    socketio.emit("leaderboard", {"user": getAndSortUserByScore(room, 4), "toggle": False}, to=dashboardcode)
+    
+    socketio.emit("leaderboard", {"user": getAndSortUserByScore(room, 5), "toggle": data}, to=dashboardcode)
 
 ################### User Actions
 @socketio.on("result-questions")
@@ -285,7 +283,7 @@ def answer(data):
     room = session.get("room")
     name = session.get("name")
     adminroom = session.get("adminroom")
-    dashboardcode = session.get("dashboard")
+    dashboardcode = session.get("dashboardcode")
 
     question = getCurrentQuestion(room)
 
@@ -318,7 +316,7 @@ def connect(auth):
     room = session.get("room")
     name = session.get("name")
     adminroom = session.get("adminroom")
-    dashboardcode = session.get("dashboard")
+    dashboardcode = session.get("dashboardcode")
 
     if room is None or name is None:
         return
@@ -346,7 +344,7 @@ def disconnect():
     room = session.get("room")
     adminroom = session.get("adminroom")
     name = session.get("name")
-    dashboardcode = session.get("dashboard")
+    dashboardcode = session.get("dashboardcode")
 
     if adminroom is not None:
         if adminroom in adminrooms:
