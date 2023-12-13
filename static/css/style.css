@@ -11,6 +11,52 @@
     border-radius: 10px; */
 }
 
+.non-leader {
+    margin-top: 65px;
+}
+.player4 {
+    
+    font-size: 40px;
+}
+
+.player5 {
+    font-size: 40px;
+}
+
+.podium1 {
+
+    margin-left: 165px;
+    font-size: 190px;
+    width: 250px;
+    height: 300px;
+    background: red;
+    border-radius: 25px;
+}
+
+.podium2 {
+
+    margin-left: 165px;
+    width: 250px;
+    font-size: 150px;
+    height: 225px;
+    background: #36bce8;
+    border-radius: 25px;
+}
+
+.podium3 {
+    
+    margin-left: 165px;
+    width: 250px;
+    font-size: 150px;
+    height: 175px;
+    background: #37df37;
+    border-radius: 25px;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+}
+
+
 .content {
     display: flex;
     align-items: center;
@@ -20,9 +66,11 @@
 .title {
     font-size: xx-large;
 }
+
 .counters {
     margin-bottom: 30px;
 }
+
 .buttons {
     display: flex;
     flex-direction: column;
@@ -78,6 +126,15 @@
     flex-direction: column;
     width: 80vh;
     align-items: stretch;
+}
+
+#ranking {
+    opacity: 0;
+    font-size: 45px;
+    position: absolute;
+    top: 53%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .messages {
@@ -203,7 +260,8 @@ h2 {
 
 .result-inputs {
 
-    margin-top: 25px;;
+    margin-top: 25px;
+    ;
     min-width: 131vw;
     margin-left: 10px;
     margin-right: 10px;

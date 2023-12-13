@@ -6,6 +6,8 @@
         Room Code : {{roomcode}}
     </div>
 
+
+
     <div class="timer">
         <h1 id="timer">0</h1>
     </div>
@@ -15,22 +17,66 @@
 
         <div class="result-inputs">
             <div class="counters row justify-content-center" style="margin-bottom: 50px;">
-                <button type="button" id="Counter1" class="counter countB1 btn btn-success " style="width: 6rem;font-size: 3rem;">0</button>
-                <button type="button" id="Counter2" class="counter countB2 btn btn-danger " style="width: 6rem;font-size: 3rem;">0</button>
-                <button type="button" id="Counter3" class="counter countB3 btn btn-warning " style="width: 6rem;font-size: 3rem;">0</button>
-                <button type="button" id="Counter4" class="counter countB4 btn btn-info " style="width: 6rem;font-size: 3rem;">0</button>
+                <button type="button" id="Counter1" class="counter countB1 btn btn-success "
+                    style="width: 6rem;font-size: 3rem;">0</button>
+                <button type="button" id="Counter2" class="counter countB2 btn btn-danger "
+                    style="width: 6rem;font-size: 3rem;">0</button>
+                <button type="button" id="Counter3" class="counter countB3 btn btn-warning "
+                    style="width: 6rem;font-size: 3rem;">0</button>
+                <button type="button" id="Counter4" class="counter countB4 btn btn-info "
+                    style="width: 6rem;font-size: 3rem;">0</button>
             </div>
 
             <div class="row justify-content-center">
-                <button class="col-4 quiz-button btn btn-success result-button" id="Button1" name="Button1">{{question.btn1}}</button>
+                <button class="col-4 quiz-button btn btn-success result-button" id="Button1"
+                    name="Button1">{{question.btn1}}</button>
 
-                <button class="col-4 quiz-button btn btn-danger result-button" id="Button2" name="Button2">{{question.btn2}}</button>
+                <button class="col-4 quiz-button btn btn-danger result-button" id="Button2"
+                    name="Button2">{{question.btn2}}</button>
             </div>
 
             <div class="row justify-content-center">
-                <button class="col-4 quiz-button btn btn-warning result-button" id="Button3" name="Button3">{{question.btn3}}</button>
-                <button class="col-4 quiz-button btn btn-info result-button" id="Button4" name="Button4">{{question.btn4}}</button>
+                <button class="col-4 quiz-button btn btn-warning result-button" id="Button3"
+                    name="Button3">{{question.btn3}}</button>
+                <button class="col-4 quiz-button btn btn-info result-button" id="Button4"
+                    name="Button4">{{question.btn4}}</button>
             </div>
+        </div>
+    </div>
+    <div id="ranking" class="card text-bg mb-3 ranking" style="left: 50%;
+    transform: translate(-50%, -50%); height: 71vh;">
+
+        <div class="leader row justify-content-center">
+
+            <div class="col-4 player2" style="margin-top: 75px;">
+
+                <div id="player2">2. Player, <br> Punkte
+
+                </div>
+                <div class="podium2"> 2 </div>
+            </div>
+            <div class="col-4 player1">
+                <div id="player1">1. Player <br> Punkte</div>
+                <div class="podium1"> 1 </div>
+            </div>
+
+            <div class="col-4 player3" style="    margin-top: 125px;">
+                <div id="player3">3. Player <br> Punkte
+                </div>
+                <div class="podium3"> 3 </div>
+            </div>
+        </div>
+
+        <div class="non-leader d-flex justify-content-evenly">
+
+
+            <p id="player4" class="player4">
+                4. Player <br> Punkte:
+            </p>
+
+            <p id="player5" class="player5">
+                5. Player <br> Punkte:
+            </p>
         </div>
     </div>
 </div>
@@ -42,9 +88,9 @@
     clearInterval(countdown);
 
     const timeHandler = (timer, answer, state) => {
-        timer = timer +10
+        timer = timer + 10
         timerobj = document.getElementById("timer")
-        console.log(timerobj)
+        
 
         clearInterval(countdown);
 
@@ -56,46 +102,57 @@
                 timerobj.innerHTML = timer;
 
                 if (timer <= 0) {
+
                     clearInterval(countdown)
-                    showSolution(answer+1, state);
+                    showSolution(answer + 1, state);
                 };
             },
             1000
         );
     }
 
+    const showRanking = (ranking) => {
+        results = document.getElementById("ranking")
+
+        ranking ? results.style.opacity = "1" : results.style.opacity = "0"
+
+    }
+
     const showSolution = (answer, state) => {
+        showRanking(false);
         const solutionButtons = document.getElementsByClassName("result-button")
         const solutionCounters = document.getElementsByClassName("counter")
-        console.log(solutionButtons);
-        console.log(solutionCounters);
 
         for (const solutionButton of solutionButtons) {
+            state ? solutionButton.style.filter = "saturate(40%)" : solutionButton.style.filter = "saturate(100%)"
             solutionButton.disabled = state;
-            
+
         }
         for (const solutionCounter of solutionCounters) {
+            state ? solutionCounter.style.filter = "saturate(40%)" : solutionCounter.style.filter = "saturate(100%)"
             solutionCounter.disabled = state;
         }
         if (state) {
             document.getElementById(`Button${answer}`).removeAttribute("disabled");
+            document.getElementById(`Button${answer}`).style.filter = "saturate(100%)"
             document.getElementById(`Counter${answer}`).removeAttribute("disabled");
+            document.getElementById(`Counter${answer}`).style.filter = "saturate(100%)"
         }
     }
 
-    const DisplayUser = (name, score) => {
-        const content = `
-            <div class="user" id="${name}" nodeValue="${score}">
-                <div class="d-flex p-2  justify-content-between">
-                    <strong class="admin-user">${name}</strong>
-                  <div class="d-flex p-2  justify-content-between admin-function">
-                        <button class="kick-button btn btn-danger" name="kick" onClick="kickUser(${name})" value="${name}">Kick</button>
-                        <div class="admin-score">Punkte: ${score}</div>
-                    <div> 
-                </div>
-            </div>
-        `;
-        users.innerHTML += content;
+    const updateUser = (data) => {
+   
+        data.forEach((item, index, arr) => {
+            document.getElementById(`player${index + 1}`).style.opacity = 1
+            document.getElementById(`player${index + 1}`).innerHTML = `${arr[index].name} <br> Punkte: ${arr[index].score}`
+        });
+
+
+        for (let i = 0; i < 5; i++) {
+            if (data[i] == null) {
+                document.getElementById(`player${i + 1}`).style.opacity = 0
+            }
+        }
     };
 
     const update = (data) => {
@@ -110,8 +167,6 @@
         showSolution(0, false);
         const solutionCounters = document.getElementsByClassName("counter")
 
-        console.log(solutionCounters);
-
         for (const solutionCounter of solutionCounters) {
             solutionCounter.innerHTML = 0;
         }
@@ -122,12 +177,14 @@
     })
 
     socketio.on("leaderboard", (data) => {
-        console.log(data);
+       
+        updateUser(data.user);
+        showRanking(data.toggle.data);
     })
 
     socketio.on("questionsresult", (data) => {
         questionCount = [0, 0, 0, 0];
-        
+        showRanking(false)
         cleanCounter();
         timeHandler(data.questions.time, data.questions.correct, true);
         update(data);

@@ -1,6 +1,6 @@
 ######################################################
 #
-#      Autor: Armin Scheu
+#      Autor: Armin Scheu, Joel Wollny
 #      Created: 2023
 #      Description: Welp, its Kahoot!, but way shittier
 #
