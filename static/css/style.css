@@ -133,7 +133,9 @@
     position: absolute;
     top: 53%;
     left: 50%;
+    width: 93vw;
     transform: translate(-50%, -50%);
+    box-shadow: none;
 }
 
 .messages {

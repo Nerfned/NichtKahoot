@@ -42,9 +42,10 @@
                     name="Button4">{{question.btn4}}</button>
             </div>
         </div>
-    </div>
-    <div id="ranking" class="card text-bg mb-3 ranking" style="left: 50%;
-    transform: translate(-50%, -50%); height: 71vh;">
+    </div> 
+ 
+    <div id="ranking" class="card text-bg mb-3 ranking align-self-center"  style="left: 50%;
+    transform: translate(-50%, -50%); ">
 
         <div class="leader  d-flex justify-content-evenly">
 
@@ -113,13 +114,14 @@
 
     const showRanking = (ranking) => {
         results = document.getElementById("ranking")
+        timerobj = document.getElementById("timer")
 
-        ranking ? results.style.opacity = "1" : results.style.opacity = "0"
-
+        ranking ? results.style.opacity = "1"  : results.style.opacity = "0"
+        ranking ? timerobj.style.opacity = "0"  : timerobj.style.opacity = "1"
     }
 
     const showSolution = (answer, state) => {
-        showRanking(false);
+        
         const solutionButtons = document.getElementsByClassName("result-button")
         const solutionCounters = document.getElementsByClassName("counter")
 
@@ -185,6 +187,7 @@
     socketio.on("questionsresult", (data) => {
         questionCount = [0, 0, 0, 0];
         showRanking(false)
+
         cleanCounter();
         timeHandler(data.questions.time, data.questions.correct, true);
         update(data);
@@ -203,7 +206,7 @@
         left: 50%;
         transform: translate(-50%);
         width: 94vw;
-        height: 86vh;
+        
         margin-top: 50px;
     }
 </style>
