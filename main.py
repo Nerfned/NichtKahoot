@@ -261,18 +261,22 @@ def adminChange(data):
 @socketio.on("userKick")
 def userKick(name):
     room = session.get("room")
-    
+    session.pop("room")
+
     if room in rooms:
         del rooms[room]["members"][name]
          
 @socketio.on("results")
 def results(data):
+    print(("Why doesnt you work"))
+
     adminroom = session.get("adminroom")
     room = getRoomFromAdminRoom(adminroom)
 
-    dashboardcode = getDashboardCodeFromRoomCode(room)
+    dashboardcode = request.args.get("dashboard")
+    # dashboardcode = getDashboardCodeFromRoomCode(room)
 
-    socketio.emit("leaderboard", {"user": getAndSortUserByScore(room, 4), "toggle": False}, to=dashboardcode)
+    socketio.emit("leaderboard", {"user": getAndSortUserByScore(room, 5), "toggle": data}, to=dashboardcode)
 
 ################### User Actions
 @socketio.on("result-questions")

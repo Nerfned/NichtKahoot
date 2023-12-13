@@ -147,32 +147,41 @@
 
         questions = currentquestion
         return JSON.parse(questions)[questionCount]
-
-        return JSON.parse(currentquestion)[questionCount]
-
     }
 
 
     const questionValue = () => {
         currentquestion = document.getElementById("edit-questions").value
         return currentquestion
+    }
 
+    const JSONVali = (data) => {
+        try {
+            JSON.parse(data)
+        } catch (e) {
+            return false
+        }
+        return true
     }
 
     const adminCommit = () => {
         questions = questionValue()
-        socketio.emit("commit", {data: {questions: questions}});
 
-        document.getElementById("currentquestion").innerHTML = JSON.parse(currentquestion)[0].text;
-
-        questionCount = 0;
-        alert("Commit Sent");
+        if (JSONVali(questions)) {
+            socketio.emit("commit", {data: {questions: questions}});
+            document.getElementById("currentquestion").innerHTML = JSON.parse(currentquestion)[0].text;
+            questionCount = 0;
+            alert("Commit Sent");
+        } else {
+            alert("JSON is invalid");
+        }
     }
 
     /// STUPID SHIT I STARTED ps .j
     const kickUser = (user) => {
-        socketio.emit("userKick", {data: user.id});
-        RemoveUser(data.name);
+        console.log(user.id)
+        socketio.emit("userKick", user.id);
+        RemoveUser(user.id);
     };
 
     ///////////////////////////////////////////////////////////// Sockets
