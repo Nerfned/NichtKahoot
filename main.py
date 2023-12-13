@@ -27,7 +27,6 @@ adminrooms = {}
 dashboard = {}
 
 ################### Functions
-
 # Generates a random uppercase roomcode
 def generate_unique_code(length):
     while True:
@@ -53,7 +52,6 @@ def changeCurrentQuestion(data, skipquestion):
             return
 
         moreCurrIndex = currIndex + skipquestion
-
         if moreCurrIndex >= 0 and moreCurrIndex < len(jsonLoadsQuestions(room)):
             rooms[room]["currentquestion"] += skipquestion
             print("Room " + room + " chaneged to question " + str(moreCurrIndex))
@@ -69,10 +67,6 @@ def updateQuestions(adminroom):
 
     socketio.emit("updateQuestions", content, to=room)
     # socketio.emit("updateQuestions", {"content": content, "toggle": True}, to=request.args.get("dashboard"))
-    
-
-
-       
 
     # !!!!! THIS IS BROKEN, PLS FIX !!!!!
     # Workaround is HERE to help it works now J.W
@@ -80,7 +74,6 @@ def updateQuestions(adminroom):
 
 def jsonLoadsQuestions(room):
     return json.loads("\"" + str(getCurrentQuestions(room)) + "\"")
-
 
 def getDashboardCodeFromRoomCode(room):
     keys = [i for i in dashboard.keys()]
@@ -90,7 +83,6 @@ def getDashboardCodeFromRoomCode(room):
 
 # Gets the current question from a room
 def getCurrentQuestions(room):
-
     if room not in rooms:
         return
 
@@ -231,6 +223,9 @@ def results():
     room = dashboard[dashboardcode]
     session["room"] = room
 
+    if len(rooms[room]["questions"]) < 1:
+        return redirect(url_for("home"))
+
     tempusers = getAndSortUserByScore(room, 4)
     
     return render_template("results.html", roomcode=room, question=getCurrentQuestion(room), users=tempusers)
@@ -268,14 +263,13 @@ def userKick(name):
          
 @socketio.on("results")
 def results(data):
-    print(("Why doesnt you work"))
-
     adminroom = session.get("adminroom")
     room = getRoomFromAdminRoom(adminroom)
-
     dashboardcode = request.args.get("dashboard")
-    # dashboardcode = getDashboardCodeFromRoomCode(room)
 
+    session["room"] = room
+    session["dashboardcode"] = dashboardcode
+    
     socketio.emit("leaderboard", {"user": getAndSortUserByScore(room, 5), "toggle": data}, to=dashboardcode)
 
 ################### User Actions
@@ -289,7 +283,7 @@ def answer(data):
     room = session.get("room")
     name = session.get("name")
     adminroom = session.get("adminroom")
-    dashboardcode = request.args.get("dashboard")
+    dashboardcode = session.get("dashboardcode")
 
     question = getCurrentQuestion(room)
 
@@ -315,7 +309,6 @@ def answer(data):
         rooms[room]["members"][name]["score"] += points
         
         socketio.emit("changeScore", {"name": name, "score": rooms[room]["members"][name]["score"]}, to=adminroom)   
-
     
 ################### Other Handlers
 @socketio.on("connect")
@@ -323,7 +316,7 @@ def connect(auth):
     room = session.get("room")
     name = session.get("name")
     adminroom = session.get("adminroom")
-    dashboardcode = request.args.get("dashboard")
+    dashboardcode = session.get("dashboardcode")
 
     if room is None or name is None:
         return
@@ -334,8 +327,10 @@ def connect(auth):
     
     if adminroom is not None:
         join_room(adminroom)
-    elif  dashboardcode is not None:
+    elif dashboardcode is not None:
         join_room(dashboardcode)
+
+        print("dashboard joined to room " + dashboard[dashboardcode])
     else:
         join_room(room)
         socketio.emit("userJoin", {"name": name, "score": 0}, to=adminroom)
@@ -349,23 +344,23 @@ def disconnect():
     room = session.get("room")
     adminroom = session.get("adminroom")
     name = session.get("name")
-    dashboardcode = request.args.get("dashboard")
+    dashboardcode = session.get("dashboardcode")
 
-    if adminroom is None:
+    if adminroom is not None:
+        if adminroom in adminrooms:
+            leave_room(adminroom)
+    elif dashboardcode is not None:
+        if dashboardcode in dashboard:
+            leave_room(dashboardcode)
+    else:
         leave_room(room)
         if room in rooms:
             socketio.emit("userLeve", {"name": name}, to=adminroom)
             del rooms[room]["members"][name]
-    elif dashboardcode is None:
-        leave_room(dashboardcode)
-    else:
-        leave_room(adminroom)
 
-    send({"name": name, "message": "has left the room"}, to=room)
-    print(f"{name} has left room {room}")
-
+            send({"name": name, "message": "has left the room"}, to=room)
+            print(f"{name} has left room {room}")
 
 ########### Main
-
 if __name__ == "__main__":
     socketio.run(app, debug=True, host="0.0.0.0", port=5001)
